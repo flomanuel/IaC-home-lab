@@ -24,14 +24,6 @@ docs/runbooks/         step-by-step guides (new VM, API token, vmbr1, Windows te
 justfile               front door: just --list
 ```
 
-## One-time setup
-
-- [x] On Proxmox (manual): VLAN-aware bridge `vmbr1` [runbook](docs/runbooks/vmbr1-setup.md)) and an API token [runbook](docs/runbooks/proxmox-api-token.md)).
-- [x] `cp .env.example .env` — fill in the API token.
-- [x] `cp tofu/terraform.tfvars.example tofu/terraform.tfvars` — node name + SSH key.
-- [x] `cp ansible/inventory/group_vars/all/secrets.yml.example ansible/inventory/group_vars/all/secrets.yml`
-- [x] `just init` and `just deps`
-
 ## Daily use
 
 New VM: [docs/runbooks/new-vm.md](docs/runbooks/new-vm.md). In short: copy
