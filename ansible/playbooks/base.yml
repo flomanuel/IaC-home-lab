@@ -1,0 +1,11 @@
+---
+- name: Baseline for all Linux VMs # One Play (the whole file: one playbook)
+  hosts: linux
+  become: true
+  roles:
+    - base
+    - nfs_mounts
+#  tasks:
+#    - name: Example task
+#      ansible.builtin.debug: # one module (unit of code or binary)
+#        msg: Hello world!

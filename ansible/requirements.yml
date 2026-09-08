@@ -1,0 +1,6 @@
+---
+# Install with: just deps
+collections:
+  - name: community.general
+  - name: community.docker
+  - name: ansible.posix

@@ -1,0 +1,5 @@
+ nfs_mounts:
+   - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data"
+     path: /mnt/data
+ compose_services:
+   - whoami

@@ -1,0 +1,14 @@
+# Secrets / local environment — never commit
+.env
+ansible/inventory/group_vars/all/secrets.yml
+
+# OpenTofu
+tofu/.terraform/
+tofu/terraform.tfstate
+tofu/terraform.tfstate.backup
+tofu/*.tfvars
+crash.log
+
+# Ansible
+*.retry
+k3s-kubeconfig.yml

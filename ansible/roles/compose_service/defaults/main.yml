@@ -1,0 +1,5 @@
+---
+compose_services: []
+compose_dest_root: /opt
+# Where the compose templates live in the repo (ansible/compose/<name>/compose.yml.j2)
+compose_src_dir: "{{ playbook_dir }}/../compose"

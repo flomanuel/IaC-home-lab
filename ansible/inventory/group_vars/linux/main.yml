@@ -1,0 +1,24 @@
+---
+# Must match vm_user in tofu (cloud-init creates this user).
+admin_user: admin
+ansible_user: "{{ admin_user }}"
+
+timezone: Europe/Berlin
+
+# TrueNAS on the DATA VLAN, serving NFS.
+truenas_data_ip: 10.30.0.50
+
+base_packages:
+  - vim
+  - nano
+  - htop
+  - curl
+  - rsync
+  - tmux
+
+# NFS mounts from TrueNAS; override per group/host. The VM needs a NIC in the
+# "data" VLAN (tofu networks list) to reach these. Example:
+# nfs_mounts:
+#   - src: "{{ truenas_data_ip }}:/mnt/tank/media"
+#     path: /mnt/media
+nfs_mounts: []

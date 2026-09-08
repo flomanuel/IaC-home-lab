@@ -1,0 +1,17 @@
+---
+# Mounts TrueNAS NFS exports declared in nfs_mounts (group_vars/host_vars).
+# The VM needs a NIC in the "data" VLAN to reach TrueNAS.
+- name: Install NFS client
+  ansible.builtin.apt:
+    name: nfs-common
+    state: present
+  when: nfs_mounts | length > 0
+
+- name: Mount NFS shares
+  ansible.posix.mount:
+    src: "{{ item.src }}"
+    path: "{{ item.path }}"
+    fstype: nfs4
+    opts: "{{ item.opts | default('defaults,_netdev') }}"
+    state: mounted
+  loop: "{{ nfs_mounts }}"

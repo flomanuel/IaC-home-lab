@@ -1,0 +1,24 @@
+---
+# Deploys each stack in compose_services: templates
+# ansible/compose/<name>/compose.yml.j2 to /opt/<name>/compose.yml
+# and runs `docker compose up`.
+- name: Create stack directories
+  ansible.builtin.file:
+    path: "{{ compose_dest_root }}/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ compose_services }}"
+
+- name: Template compose files
+  ansible.builtin.template:
+    src: "{{ compose_src_dir }}/{{ item }}/compose.yml.j2"
+    dest: "{{ compose_dest_root }}/{{ item }}/compose.yml"
+    mode: "0644"
+  loop: "{{ compose_services }}"
+
+- name: Start compose stacks
+  community.docker.docker_compose_v2:
+    project_src: "{{ compose_dest_root }}/{{ item }}"
+    state: present
+    remove_orphans: true
+  loop: "{{ compose_services }}"

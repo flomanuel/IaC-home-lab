@@ -1,0 +1,7 @@
+---
+- name: Docker hosts and their compose stacks
+  hosts: docker_hosts
+  become: true
+  roles:
+    - docker
+    - compose_service

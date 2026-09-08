@@ -1,0 +1,4 @@
+---
+# TODO: rename the prefix to your service name
+template_service_package: changeme
+template_service_name: changeme

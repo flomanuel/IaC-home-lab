@@ -1,0 +1,8 @@
+# Example stack. Deploy it by adding to a docker host's host_vars:
+#   compose_services: [whoami]
+services:
+  whoami:
+    image: traefik/whoami:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"

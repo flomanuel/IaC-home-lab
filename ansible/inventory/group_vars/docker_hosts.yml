@@ -1,0 +1,7 @@
+---
+# Compose stacks to deploy on every docker host; usually overridden per host
+# in host_vars/<name>.yml. Each entry needs ansible/compose/<name>/compose.yml.j2.
+compose_services: []
+
+# Add admin_user to the docker group (docker CLI without sudo).
+docker_admin_in_group: true

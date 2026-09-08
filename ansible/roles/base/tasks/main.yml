@@ -1,0 +1,25 @@
+---
+- name: Set timezone
+  community.general.timezone:
+    name: "{{ timezone }}"
+
+- name: Install base packages
+  ansible.builtin.apt:
+    name: "{{ base_packages + ['unattended-upgrades'] }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Enable unattended upgrades
+  ansible.builtin.copy:
+    src: 20auto-upgrades
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    mode: "0644"
+
+- name: Harden sshd
+  ansible.builtin.copy:
+    src: 50-hardening.conf
+    dest: /etc/ssh/sshd_config.d/50-hardening.conf
+    mode: "0644"
+    validate: sshd -t -f %s
+  notify: Restart sshd
