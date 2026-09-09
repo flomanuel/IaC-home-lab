@@ -79,3 +79,19 @@ variable "agent_enabled" {
   type        = bool
   default     = false
 }
+
+variable "security_groups" {
+  description = "This VM's firewall security groups, keyed by name, e.g. { ssh = [{ type = \"in\", action = \"ACCEPT\", proto = \"tcp\", dport = \"22\", comment = \"SSH\" }] }. Each key becomes a Proxmox security group named \"<vm-name>-<key>\" and is applied as a rule on this VM's firewall. Leave empty (the default) to keep the Proxmox firewall disabled for this VM, same as today."
+  type = map(list(object({
+    type    = string
+    action  = string
+    proto   = optional(string)
+    dport   = optional(string)
+    sport   = optional(string)
+    source  = optional(string)
+    dest    = optional(string)
+    comment = optional(string)
+    iface   = optional(string)
+  })))
+  default = {}
+}

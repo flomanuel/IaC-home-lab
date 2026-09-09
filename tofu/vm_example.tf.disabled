@@ -29,6 +29,18 @@ module "example" {
   # Optional:
   # vm_id = 150
   # tags  = ["docker"]
+
+  # Optional: each key becomes a Proxmox security group ("<name>-<key>") and
+  # is applied as a rule on this VM's firewall. Leave unset to keep the
+  # Proxmox firewall disabled for this VM.
+  #security_groups = {
+  #   local.common_security_groups.ssh_in
+  #   local.common_security_groups.http_in
+  #   local.common_security_groups.https_in
+  #   protocol_name = [
+  #     { type = "in", action = "ACCEPT", proto = "tcp", dport = "22", comment = "SSH" },
+  #   ]
+  # }
 }
 
 output "example" {

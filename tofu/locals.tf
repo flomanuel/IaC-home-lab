@@ -20,10 +20,23 @@ locals {
     debian = proxmox_download_file.debian_13.id
     ubuntu = proxmox_download_file.ubuntu_2604.id
   }
-  
+
   cloud_snippets = {
     qemu_guest_agent_debian = proxmox_virtual_environment_file.vendor_data.id
     qemu_guest_agent_ubuntu = proxmox_virtual_environment_file.vendor_data.id
+  }
+
+  # Reusable Proxmox security groups.
+  common_security_groups = {
+    ssh_in = [
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "22", comment = "SSH" },
+    ]
+    http_in = [
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "80", comment = "HTTP" },
+    ]
+    https_in = [
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "443", comment = "HTTPS" },
+    ]
   }
 
   # Shared settings passed to every VM module instance as one object.

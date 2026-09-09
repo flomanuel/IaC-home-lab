@@ -21,9 +21,9 @@ resource "proxmox_virtual_environment_vm" "this" {
   memory {
     dedicated = var.memory
   }
-
+  
   scsi_hardware = "virtio-scsi-single"
-
+  
   disk {
     datastore_id = var.common.storage_disks
     file_id      = var.common.images[var.image]
@@ -43,8 +43,9 @@ resource "proxmox_virtual_environment_vm" "this" {
   dynamic "network_device" {
     for_each = var.networks
     content {
-      bridge  = var.common.trunk_bridge
-      vlan_id = var.common.vlans[network_device.value.vlan].tag
+      bridge   = var.common.trunk_bridge
+      vlan_id  = var.common.vlans[network_device.value.vlan].tag
+      firewall = length(var.security_groups) > 0
     }
   }
 
