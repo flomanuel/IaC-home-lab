@@ -1,0 +1,12 @@
+ nfs_mounts:
+   - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/audio"
+     path: /mnt/audio
+   - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/documents"
+     path: /mnt/documents
+   - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/images"
+     path: /mnt/images
+   - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/video"
+     path: /mnt/video
+ compose_services:
+   - whoami
+
