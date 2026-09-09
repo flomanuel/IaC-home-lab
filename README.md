@@ -1,4 +1,4 @@
-# home_server
+# Home Lab IaC Project
 
 Infrastructure-as-code for the homelab: **OpenTofu** provisions VMs on the
 Proxmox node (`10.20.0.50`), **Ansible** configures the Linux guests. The
