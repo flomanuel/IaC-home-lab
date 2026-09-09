@@ -11,6 +11,7 @@ variable "common" {
     ssh_public_keys = list(string)
     dns_servers     = list(string)
     dns_domain      = string
+    security_groups = map(string)
   })
 }
 
@@ -80,8 +81,14 @@ variable "agent_enabled" {
   default     = false
 }
 
-variable "security_groups" {
-  description = "This VM's firewall security groups, keyed by name, e.g. { ssh = [{ type = \"in\", action = \"ACCEPT\", proto = \"tcp\", dport = \"22\", comment = \"SSH\" }] }. Each key becomes a Proxmox security group named \"<vm-name>-<key>\" and is applied as a rule on this VM's firewall. Leave empty (the default) to keep the Proxmox firewall disabled for this VM, same as today."
+variable "global_security_groups" {
+  description = "Keys into common.security_groups (the shared groups defined once in the root module's firewall.tf) to attach to this VM's firewall, e.g. [\"ssh\", \"http\", \"https\"]. Leave empty (the default) to attach none."
+  type        = list(string)
+  default     = []
+}
+
+variable "custom_firewall_rules" {
+  description = "This VM's own one-off firewall rules, grouped under a label for readability, e.g. { nfs4 = [{ type = \"in\", action = \"ACCEPT\", proto = \"tcp\", dport = \"2049\", comment = \"NFSv4\", iface = \"net1\" }] }. The label is not a Proxmox object; these become direct rules on this VM's firewall, not a security group. Leave empty (the default) to define none."
   type = map(list(object({
     type    = string
     action  = string

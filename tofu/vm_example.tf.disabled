@@ -30,17 +30,18 @@ module "example" {
   # vm_id = 150
   # tags  = ["docker"]
 
-  # Optional: each key becomes a Proxmox security group ("<name>-<key>") and
-  # is applied as a rule on this VM's firewall. Leave unset to keep the
-  # Proxmox firewall disabled for this VM.
-  #security_groups = {
-  #   local.common_security_groups.ssh_in
-  #   local.common_security_groups.http_in
-  #   local.common_security_groups.https_in
-  #   protocol_name = [
-  #     { type = "in", action = "ACCEPT", proto = "tcp", dport = "22", comment = "SSH" },
+  # Optional: attach shared groups defined once in tofu/firewall.tf.
+  # global_security_groups = ["ssh", "http", "https"]
+
+  # Optional: this VM's own one-off rules (not shared with other VMs). The
+  # label (e.g. "nfs4") is not a Proxmox object, just a readability grouping.
+  # custom_firewall_rules = {
+  #   nfs4 = [
+  #     { type = "in", action = "ACCEPT", proto = "tcp", dport = "2049", comment = "NFSv4", iface = "net1" },
   #   ]
   # }
+
+  # Leaving both unset keeps the Proxmox firewall disabled for this VM.
 }
 
 output "example" {

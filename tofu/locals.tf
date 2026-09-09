@@ -26,19 +26,6 @@ locals {
     qemu_guest_agent_ubuntu = proxmox_virtual_environment_file.vendor_data.id
   }
 
-  # Reusable Proxmox security groups.
-  common_security_groups = {
-    ssh_in = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "22", comment = "SSH" },
-    ]
-    http_in = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "80", comment = "HTTP" },
-    ]
-    https_in = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "443", comment = "HTTPS" },
-    ]
-  }
-
   # Shared settings passed to every VM module instance as one object.
   common = {
     node_name       = var.node_name
@@ -51,5 +38,9 @@ locals {
     ssh_public_keys = var.ssh_public_keys
     dns_servers     = var.dns_servers
     dns_domain      = var.dns_domain
+    # Global security group name -> its Proxmox name (see firewall.tf).
+    # Referencing it through `common` (rather than a bare string) gives
+    # Terraform a real dependency edge on the group being created first.
+    security_groups = { for k, v in proxmox_virtual_environment_cluster_firewall_security_group.common : k => v.name }
   }
 }
