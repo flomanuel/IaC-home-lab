@@ -11,3 +11,7 @@ provider "proxmox" {
     private_key=file(var.ssh_keypath)
   }
 }
+
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
+}
