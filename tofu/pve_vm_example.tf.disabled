@@ -6,6 +6,18 @@
 #   5. just play-limit base <name>   (once SSH access to the VLAN exists)
 # Full walkthrough: docs/runbooks/new-vm.md
 
+# Cloudflare DNS records
+resource "cloudflare_dns_record" "foo_dot_bar_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "foo.bar..home"
+  content = "x.x.x.x"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;foo"
+}
+
+# VM config
 module "example" {
   source = "./modules/vm"
   common = local.common

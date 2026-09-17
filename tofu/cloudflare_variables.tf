@@ -3,7 +3,7 @@ variable "cloudflare_api_token" {
   type        = string
 }
 
-variable "zone_id_sauers_dot_link" {
+variable "zone_id_1" {
   description = "ID of the domain zone"
   type        = string
 }

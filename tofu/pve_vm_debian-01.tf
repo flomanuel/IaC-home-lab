@@ -1,3 +1,25 @@
+# Cloudflare DNS records
+resource "cloudflare_dns_record" "debian-01_dot_prod_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "debian-01.prod.home"
+  content = "10.50.1.10"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;proxmox"
+}
+
+resource "cloudflare_dns_record" "debian-01_dot_data_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "debian-01.data.home"
+  content = "10.30.1.10"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;proxmox"
+}
+
+# VM config
 module "debian-01" {
   source = "./modules/vm"
   common = local.common

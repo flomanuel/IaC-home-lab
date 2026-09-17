@@ -1,5 +1,7 @@
+# DNS records that are not directly connected to LXC or a Proxmox VM.
+
 resource "cloudflare_dns_record" "proxmox-1_dot_mgmt_dot_home" {
-  zone_id = var.zone_id_sauers_dot_link
+  zone_id = var.zone_id_1
   name    = "proxmox-1.mgmt.home"
   content = "10.20.0.50"
   type    = "A"
@@ -9,7 +11,7 @@ resource "cloudflare_dns_record" "proxmox-1_dot_mgmt_dot_home" {
 }
 
 resource "cloudflare_dns_record" "proxmox-backup-server_dot_mgmt_dot_home" {
-  zone_id = var.zone_id_sauers_dot_link
+  zone_id = var.zone_id_1
   name    = "proxmox-backup-server.mgmt.home"
   content = "10.20.1.103"
   type    = "A"
@@ -19,7 +21,7 @@ resource "cloudflare_dns_record" "proxmox-backup-server_dot_mgmt_dot_home" {
 }
 
 resource "cloudflare_dns_record" "truenas_dot_data_dot_home" {
-  zone_id = var.zone_id_sauers_dot_link
+  zone_id = var.zone_id_1
   name    = "truenas.data.home"
   content = "10.30.0.50"
   type    = "A"
@@ -29,7 +31,7 @@ resource "cloudflare_dns_record" "truenas_dot_data_dot_home" {
 }
 
 resource "cloudflare_dns_record" "truenas_dot_mgmt_dot_home" {
-  zone_id = var.zone_id_sauers_dot_link
+  zone_id = var.zone_id_1
   name    = "truenas.mgmt.home"
   content = "10.20.0.52"
   type    = "A"
@@ -39,7 +41,7 @@ resource "cloudflare_dns_record" "truenas_dot_mgmt_dot_home" {
 }
 
 resource "cloudflare_dns_record" "truenas-old_dot_mgmt_dot_home" {
-  zone_id = var.zone_id_sauers_dot_link
+  zone_id = var.zone_id_1
   name    = "truenas-old.mgmt.home"
   content = "10.20.0.51"
   type    = "A"
