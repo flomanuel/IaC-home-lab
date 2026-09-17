@@ -59,13 +59,3 @@ variable "ssh_public_keys" {
   description = "SSH public keys installed for vm_user via cloud-init. Set in terraform.tfvars (see terraform.tfvars.example)."
   type        = list(string)
 }
-
-variable "dns_servers" {
-  description = "DNS servers handed to VMs via cloud-init."
-  type        = list(string)
-}
-
-variable "dns_domain" {
-  description = "DNS search domain."
-  type = string
-}

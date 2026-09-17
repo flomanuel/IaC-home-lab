@@ -36,8 +36,8 @@ locals {
     snippets        = local.cloud_snippets
     vm_user         = var.vm_user
     ssh_public_keys = var.ssh_public_keys
-    dns_servers     = var.dns_servers
-    dns_domain      = var.dns_domain
+    dns_servers     = ["10.50.0.1", "10.20.0.1", "10.30.0.1"]
+    dns_domain      = "prod.internal"
     # Global security group name -> its Proxmox name (see firewall.tf).
     # Referencing it through `common` (rather than a bare string) gives
     # Terraform a real dependency edge on the group being created first.

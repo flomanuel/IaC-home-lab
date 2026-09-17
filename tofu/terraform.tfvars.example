@@ -7,6 +7,3 @@ ssh_public_keys = [
 
 ssh_username = "foo"
 ssh_keypath = "path/to/id_rsa"
-
-dns_servers = ["x.x.x.x"]
-dns_domain = "sld.tld"
