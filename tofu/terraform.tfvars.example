@@ -7,3 +7,7 @@ ssh_public_keys = [
 
 ssh_username = "foo"
 ssh_keypath = "path/to/id_rsa"
+
+# Cloudflare
+cloudflare_api_token = "foo_bar_baz"
+zone_id = "foo_bar_baz"

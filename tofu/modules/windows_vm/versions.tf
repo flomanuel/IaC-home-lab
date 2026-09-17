@@ -3,5 +3,8 @@ terraform {
     proxmox = {
       source  = "bpg/proxmox"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+    }
   }
 }
