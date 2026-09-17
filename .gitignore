@@ -11,3 +11,4 @@ crash.log
 # Ansible
 *.retry
 k3s-kubeconfig.yml
+.DS_Store
