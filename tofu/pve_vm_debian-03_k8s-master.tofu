@@ -32,8 +32,8 @@ module "debian-03" {
     { vlan = "mgmt", ip = "10.20.0.13/16" },
   ]
 
-  cores   = 2
-  memory  = 2048
+  cores   = 4
+  memory  = 8192
   disk_gb = 40
 
   tags  = ["K8s","K8s_master"]

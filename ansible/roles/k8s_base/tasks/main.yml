@@ -35,5 +35,3 @@
     name: chrony
     enabled: true
     masked: no
-
-# systemctl enable --now chrony
