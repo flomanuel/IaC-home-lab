@@ -1,6 +1,6 @@
 ---
 - name: Install prerequisites
-  ansible.builtin.apt:
+  apt:
     name:
       - ca-certificates
       - curl
@@ -9,16 +9,16 @@
     cache_valid_time: 3600
 
 - name: Add Docker apt repository
-  ansible.builtin.deb822_repository:
+  deb822_repository:
     name: docker
     types: deb
-    uris: "https://download.docker.com/linux/{{ ansible_distribution | lower }}"
-    suites: "{{ ansible_distribution_release }}"
+    uris: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"
+    suites: "{{ ansible_facts['distribution_release'] }}"
     components: stable
-    signed_by: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+    signed_by: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}/gpg"
 
 - name: Install Docker
-  ansible.builtin.apt:
+  apt:
     name:
       - docker-ce
       - docker-ce-cli
@@ -29,13 +29,13 @@
     update_cache: true
 
 - name: Enable Docker
-  ansible.builtin.service:
+  service:
     name: docker
     state: started
     enabled: true
 
 - name: Add admin user to docker group
-  ansible.builtin.user:
+  user:
     name: "{{ admin_user }}"
     groups: docker
     append: true

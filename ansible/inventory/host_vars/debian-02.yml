@@ -1,0 +1,3 @@
+# secrets, DBs, docker compose
+compose_services:
+  - whoami

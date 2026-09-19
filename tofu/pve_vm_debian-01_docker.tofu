@@ -19,6 +19,16 @@ resource "cloudflare_dns_record" "debian-01_dot_data_dot_home" {
   comment = "tofu;home-lab;proxmox"
 }
 
+resource "cloudflare_dns_record" "debian-01_dot_mgmt_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "debian-01.mgmt.home"
+  content = "10.20.1.10"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;proxmox"
+}
+
 # VM config
 module "debian-01" {
   source = "./modules/vm"
@@ -34,23 +44,18 @@ module "debian-01" {
   networks = [
     { vlan = "prod", ip = "10.50.1.10/16" },
     { vlan = "data", ip = "10.30.1.10/16" },
+    { vlan = "mgmt", ip = "10.20.1.10/16" },
   ]
 
   cores   = 4
   memory  = 8192 # MiB
   disk_gb = 20
 
-  tags  = ["docker","docker-compose"]
+  tags  = ["docker-compose","applications"]
 
   # Shared groups defined once in tofu/firewall.tf, attached by key.
   global_security_groups = ["ssh", "http", "https"]
 
-  # This VM's own one-off rules (not shared with other VMs).
-  custom_firewall_rules = {
-#    nfs4 = [
-#      { type = "in", action = "ACCEPT", proto = "tcp", dport = "2049", comment = "NFSv4", iface = "net1" },
-#    ]
-  }
 }
 
 output "debian-01" {

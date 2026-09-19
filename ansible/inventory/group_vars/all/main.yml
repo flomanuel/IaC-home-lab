@@ -1,4 +1,6 @@
 ---
-# Local network values — not versioned. Copied from secrets.yml.example.
-truenas_data_ip: 10.30.0.50
-debian01_ip: 10.50.1.10
+# Local network values.
+truenas_data_ip:  10.30.0.50
+debian01_ip:      10.20.1.10
+debian02_ip:      10.20.0.10
+debian03_ip:      10.20.0.11
