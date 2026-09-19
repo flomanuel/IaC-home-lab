@@ -1,7 +1,7 @@
 resource "cloudflare_dns_record" "debian-03_dot_prod_dot_home" {
   zone_id = var.zone_id_1
   name    = "debian-03.prod.home"
-  content = "10.50.0.11"
+  content = "10.50.0.13"
   type    = "A"
   ttl     = 1
   proxied = false
@@ -11,7 +11,7 @@ resource "cloudflare_dns_record" "debian-03_dot_prod_dot_home" {
 resource "cloudflare_dns_record" "debian-03_dot_mgmt_dot_home" {
   zone_id = var.zone_id_1
   name    = "debian-03.mgmt.home"
-  content = "10.20.0.11"
+  content = "10.20.0.13"
   type    = "A"
   ttl     = 1
   proxied = false
@@ -28,15 +28,15 @@ module "debian-03" {
   agent_enabled = true
 
   networks = [
-    { vlan = "prod", ip = "10.50.0.11/16" },
-    { vlan = "mgmt", ip = "10.20.0.11/16" },
+    { vlan = "prod", ip = "10.50.0.13/16" },
+    { vlan = "mgmt", ip = "10.20.0.13/16" },
   ]
 
-  cores   = 4
-  memory  = 8192
-  disk_gb = 20
+  cores   = 2
+  memory  = 2048
+  disk_gb = 40
 
-  tags  = ["K8s"]
+  tags  = ["K8s","K8s_master"]
 
   global_security_groups = ["ssh"]
 }

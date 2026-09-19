@@ -1,0 +1,6 @@
+k8s_base_packages:
+  - apt-transport-https
+  - ca-certificates
+  - gnupg
+  - lsb-release
+  - chrony

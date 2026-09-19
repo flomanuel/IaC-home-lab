@@ -1,8 +1,7 @@
-# Cloudflare DNS records
 resource "cloudflare_dns_record" "debian-02_dot_prod_dot_home" {
   zone_id = var.zone_id_1
   name    = "debian-02.prod.home"
-  content = "10.50.0.10"
+  content = "10.50.0.12"
   type    = "A"
   ttl     = 1
   proxied = false
@@ -12,7 +11,7 @@ resource "cloudflare_dns_record" "debian-02_dot_prod_dot_home" {
 resource "cloudflare_dns_record" "debian-02_dot_mgmt_dot_home" {
   zone_id = var.zone_id_1
   name    = "debian-02.mgmt.home"
-  content = "10.20.0.10"
+  content = "10.20.0.12"
   type    = "A"
   ttl     = 1
   proxied = false
@@ -29,13 +28,13 @@ module "debian-02" {
   agent_enabled = true
 
   networks = [
-    { vlan = "prod", ip = "10.50.0.10/16" },
-    { vlan = "mgmt", ip = "10.20.0.10/16" },
+    { vlan = "prod", ip = "10.50.0.12/16" },
+    { vlan = "mgmt", ip = "10.20.0.12/16" },
   ]
 
   cores   = 4
   memory  = 8192
-  disk_gb = 20
+  disk_gb = 40
 
   tags  = ["docker-compose","DBs","secrets"]
 

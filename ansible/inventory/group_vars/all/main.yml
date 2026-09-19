@@ -1,6 +1,8 @@
 ---
 # Local network values.
 truenas_data_ip:  10.30.0.50
-debian01_ip:      10.20.1.10
-debian02_ip:      10.20.0.10
-debian03_ip:      10.20.0.11
+debian01_ip:      10.20.0.11
+debian02_ip:      10.20.0.12
+debian03_ip:      10.20.0.13
+debian04_ip:      10.20.0.14
+debian05_ip:      10.20.0.15
