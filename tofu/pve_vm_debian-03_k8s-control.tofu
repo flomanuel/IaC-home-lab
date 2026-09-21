@@ -40,7 +40,7 @@ module "k8s-control-1" {
 
   global_security_groups = [
     "ssh", "http", "https",
-    "k8s_api", "k8s_registration", "k8s_etcd_client", "k8s_etcd_peer", "k8s_etcd_metrics", # K8s server rules
+    "k8s_api_cluster", "k8s_registration", "k8s_etcd_client", "k8s_etcd_peer", "k8s_etcd_metrics", "metallb_memberlist", # K8s server rules
     "k8s_kubelet_metric", "k8s_nodeport", "k8s_cni_health", "k8s_cni_vxlan" # K8s rules for all nodes
   ]
 

@@ -40,7 +40,7 @@ module "k8s-lb-1" {
 
   global_security_groups = [
     "ssh",
-    "k8s_api", "k8s_registration", "k8s_etcd_client", "k8s_etcd_peer", "k8s_etcd_metrics"
+    "k8s_api_admin", "k8s_registration"
   ]
 }
 

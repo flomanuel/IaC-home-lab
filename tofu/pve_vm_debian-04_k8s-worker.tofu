@@ -40,7 +40,7 @@ module "k8s-worker-1" {
 
   global_security_groups = [
     "ssh", "https", "http",
-    "k8s_kubelet_metric", "k8s_nodeport", "k8s_cni_health", "k8s_cni_vxlan" # K8s rules for all nodes
+    "k8s_kubelet_metric", "k8s_nodeport", "k8s_cni_health", "k8s_cni_vxlan", "metallb_memberlist", # K8s rules for all nodes
   ]
 }
 

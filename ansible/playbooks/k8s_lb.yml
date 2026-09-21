@@ -54,7 +54,7 @@
           backend rke2_registration_backend
             balance {{ haproxyBalanceMethod }}
             option tcp-check
-          {{ haproxyServers }}
+            {{ haproxyServers }}
 
           frontend kube_api
             bind *:{{ rke2ApiPort }}
@@ -63,7 +63,7 @@
           backend kube_api_backend
             balance {{ haproxyBalanceMethod }}
             option tcp-check
-          {{ haproxyApiServers }}
+            {{ haproxyApiServers }}
       notify: restart haproxy
 
     - name: Ensure haproxy is running
