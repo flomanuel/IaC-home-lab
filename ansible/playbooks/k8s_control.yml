@@ -1,0 +1,89 @@
+---
+- name: Setup for Kubernetes Control Nodes
+  hosts: k8s_control
+  become: true
+  roles:
+    - k8s_base
+  gather_facts: true
+  serial: 1
+  vars_prompt: # todo: replave with external secrets management
+    - name: rke2Token
+      prompt: "RKE2 cluster token (leave empty to abort)"
+      private: true
+      confirm: true
+      unsafe: true
+  tasks:
+    - name: Ensure config directory exists
+      file:
+        path: "{{ rke2ConfigDir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+    - name: Install RKE2 server
+      shell: curl -sfL {{ rke2InstallScriptUrl }} | INSTALL_RKE2_VERSION={{ rke2Version }} sh -
+      args:
+        creates: /usr/local/bin/rke2
+    - name: Write bootstrap server config
+      copy:
+        dest: "{{ rke2ConfigFile }}"
+        owner: root
+        group: root
+        mode: "0600"
+        content: |
+          token: {{ rke2Token }}
+          write-kubeconfig-mode: "{{ rke2KubeconfigMode }}"
+          tls-san:
+            - {{ rke2RegistrationAddress }}
+            - 127.0.0.1
+            - localhost
+            {% for host in groups['k8s_control'] %}
+            - {{ hostvars[host].ansible_host | default(host) }}
+            {% endfor %}
+      when: inventory_hostname == rke2BootstrapHost
+      notify: restart rke2-server
+    - name: Write joining server config
+      copy:
+        dest: "{{ rke2ConfigFile }}"
+        owner: root
+        group: root
+        mode: "0600"
+        content: |
+          server: https://{{ rke2RegistrationAddress }}:{{ rke2RegistrationPort }}
+          token: {{ rke2Token }}
+          write-kubeconfig-mode: "{{ rke2KubeconfigMode }}"
+          tls-san:
+            - {{ rke2RegistrationAddress }}
+            - 127.0.0.1
+            - localhost
+            {% for host in groups['k8s_control'] %}
+            - {{ hostvars[host].ansible_host | default(host) }}
+            {% endfor %}
+      when: inventory_hostname != rke2BootstrapHost
+      notify: restart rke2-server
+    - name: Ensure rke2-server is enabled and started
+      systemd:
+        name: rke2-server
+        enabled: true
+        state: started
+    - name: Wait for registration port via load balancer
+      wait_for:
+        host: "{{ rke2RegistrationAddress }}"
+        port: "{{ rke2RegistrationPort }}"
+        delay: 5
+        timeout: 300
+#      delegate_to: localhost
+      become: false
+      when: inventory_hostname == rke2BootstrapHost
+
+    - name: Wait for node-token to exist on bootstrap server
+      wait_for:
+        path: /var/lib/rancher/rke2/server/node-token
+        timeout: 300
+      when: inventory_hostname == rke2BootstrapHost
+
+  handlers:
+    - name: restart rke2-server
+      systemd:
+        name: rke2-server
+        state: restarted

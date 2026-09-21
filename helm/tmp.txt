@@ -1,0 +1,9 @@
+helm repo add metallb https://metallb.github.io/metallb
+
+helm repo update
+
+kubectl apply -f 1_before_metallb.yml
+
+helm install metallb metallb/metallb --namespace metallb-system
+
+kubectl apply -f 2_metallb_config.yml

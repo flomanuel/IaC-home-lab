@@ -21,10 +21,13 @@ plan:
 apply:
     cd {{ tofu_dir }} && tofu apply
 
-# Destroy EVERYTHING managed by tofu — asks for confirmation
+
+default := ' '
+# Destroy the given resources (ALL if none are given) managed by tofu.
 [group('tofu')]
-destroy:
-    cd {{ tofu_dir }} && tofu destroy
+destroy resources=default:
+    cd {{ tofu_dir }} && tofu destroy {{ resources }}
+
 
 [group('tofu')]
 fmt:
