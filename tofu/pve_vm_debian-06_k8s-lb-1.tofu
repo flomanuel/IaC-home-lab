@@ -21,6 +21,7 @@ resource "cloudflare_dns_record" "k8s-lb-1_dot_mgmt_dot_home" {
 module "k8s-lb-1" {
   source = "./modules/vm"
   common = local.common
+  create_after = [module.k8s-worker-2]
 
   name          = "k8s-lb-1"
   image         = "debian"

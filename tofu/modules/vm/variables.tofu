@@ -87,6 +87,12 @@ variable "global_security_groups" {
   default     = []
 }
 
+variable "create_after" {
+  description = "Upstream module(s) (e.g. [module.debian-01]) this VM's disk creation must wait for."
+  type        = any
+  default     = []
+}
+
 variable "custom_firewall_rules" {
   description = "This VM's own one-off firewall rules, grouped under a label for readability, e.g. { nfs4 = [{ type = \"in\", action = \"ACCEPT\", proto = \"tcp\", dport = \"2049\", comment = \"NFSv4\", iface = \"net1\" }] }. The label is not a Proxmox object; these become direct rules on this VM's firewall, not a security group. Leave empty (the default) to define none."
   type = map(list(object({

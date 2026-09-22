@@ -1,4 +1,6 @@
 resource "proxmox_virtual_environment_vm" "this" {
+  depends_on = [var.create_after]
+
   name      = var.name
   node_name = var.common.node_name
   vm_id     = var.vm_id

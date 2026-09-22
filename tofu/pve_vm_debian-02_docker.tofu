@@ -21,6 +21,7 @@ resource "cloudflare_dns_record" "debian-02_dot_mgmt_dot_home" {
 module "debian-02" {
   source = "./modules/vm"
   common = local.common
+  create_after = [module.debian-01]
 
   name  = "debian-02"
   image = "debian"
