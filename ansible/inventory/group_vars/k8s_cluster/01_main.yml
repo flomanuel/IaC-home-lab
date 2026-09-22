@@ -1,6 +1,11 @@
-k8s_base_packages:
-  - apt-transport-https
+k8s_packages:
+#  - apt-transport-https
+  - curl
   - ca-certificates
   - gnupg
-  - lsb-release
-  - chrony
+#  - lsb-release
+#  - chrony
+
+k8s_kernel_modules:
+  - overlay
+  - br_netfilter

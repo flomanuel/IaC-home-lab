@@ -6,6 +6,7 @@ locals {
     module.k8s-control-1.primary_ip,
     module.k8s-worker-1.primary_ip,
     module.k8s-worker-2.primary_ip,
+    module.k8s-worker-3.primary_ip,
   ])
   k8s_cluster_ips = "${local.k8s_node_ips},${local.k8s_lb_ip}" # nodes + LB
   admin_ips       = "10.50.0.1"                                # WireGuard: NAT

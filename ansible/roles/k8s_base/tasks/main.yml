@@ -1,37 +1,44 @@
 ---
 - name: Install packages
-  ansible.builtin.apt:
-    name: "{{ k8s_base_packages }}"
+  apt:
+    name: "{{ k8s_packages }}"
     state: present
     update_cache: true
-    cache_valid_time: 3600
+
+- name: Ensure kernel modules load at boot
+  copy:
+    dest: /etc/modules-load.d/k8s.conf
+    mode: "0644"
+    content: |
+      {% for module in k8s_kernel_modules %}
+      {{ module }}
+      {% endfor %}
+
+- name: Load kernel modules now
+  command: "modprobe {{ item }}"
+  loop: "{{ k8s_kernel_modules }}"
+  changed_when: false
+
+- name: Configure sysctl settings for Kubernetes
+  copy:
+    dest: /etc/sysctl.d/90-k8s.conf
+    mode: "0644"
+    src: 90-k8s.conf
+  notify: apply sysctl
+
+- name: Disable swap for current session
+  command: swapoff -a
+  when: ansible_facts.swaptotal_mb | int > 0
+  changed_when: ansible_facts.swaptotal_mb | int > 0
 
 - name: Disable swap permanently (comment out swap entries)
   replace:
     path: /etc/fstab
     regexp: '^([^#\n]*\sswap\s.*)$'
     replace: '#\1'
-    backup: true
-  become: true
 
-- name: Disable swap for current session
-  command: swapoff -a
-  become: true
-  when: ansible_facts.swaptotal_mb | default(0) > 0
-  changed_when: true
-
-- name: Make sure packets are handled correctly between containers and nodes.
-  ansible.builtin.copy:
-    src: 99-kubernetes.conf
-    dest: /etc/sysctl.d/99-kubernetes.conf
-    owner: root
-    group: root
-    mode: '0644'
-  become: true
-  notify: reload sysctl
-
-- name: Enable service chrony
-  systemd_service:
-    name: chrony
-    enabled: true
-    masked: no
+# - name: Enable service chrony
+#   systemd_service:
+#     name: chrony
+#     enabled: true
+#     masked: no
