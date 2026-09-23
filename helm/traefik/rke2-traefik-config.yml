@@ -1,0 +1,17 @@
+# https://docs.rke2.io/networking/networking_services#ingress-controller
+# https://github.com/rancher/rke2-charts/blob/main/charts/rke2-traefik/rke2-traefik/39.0.502/values.yaml
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: rke2-traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    logs:
+      general:
+        level: "DEBUG"
+    ingressRoute:
+      dashboard:
+        enabled: true
+        entryPoints: [web, websecure]
+        matchRule: Host(`k8s-worker-1.prod.home.sauers.link`)
