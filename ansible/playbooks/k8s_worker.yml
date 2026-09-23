@@ -13,5 +13,6 @@
           --server-ip {{k3s_server}} \
           --user {{ansible_user}} \
           --k3s-version {{k3s_version}} \
-          --k3s-channel stable \
+          --k3s-channel stable
       delegate_to: localhost
+      become: false

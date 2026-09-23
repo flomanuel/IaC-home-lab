@@ -60,7 +60,7 @@ variable "disk_gb" {
 }
 
 variable "data_disks" {
-  description = "Additional disks, attached as scsi1, scsi2, ... in list order, e.g. [{ datastore_id = \"local-zfs\", size = 8, serial = \"k3s-etcd\" }]. Size in GiB. The serial makes the disk show up in the guest as /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_<serial>. Leave empty (the default) for none."
+  description = "Additional disks, attached as scsi1, scsi2, ... in list order, e.g. [{ datastore_id = \"local-zfs\", size = 8, serial = \"k3s-etcd\" }]. Size in GiB. The serial is visible in the guest via `lsblk -o NAME,SERIAL`. Leave empty (the default) for none."
   type = list(object({
     datastore_id = string
     size         = number

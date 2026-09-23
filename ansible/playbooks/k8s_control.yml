@@ -11,7 +11,7 @@
     VIP: "tls_san_vip"
     INTERFACE: "eth0"
     KVVERSION: "v1.2.4"
-    CTR: "/var/lib/rancher/rke2/bin/ctr"
+    CTR: "/var/lib/rancher/k3s/data/current/bin/ctr"
     CONTAINERD_SOCK: "/run/k3s/containerd/containerd.sock"
     KV_MANIFEST: "/var/lib/rancher/k3s/server/manifests/kube-vip-manifest.yml"
   tasks:
@@ -23,15 +23,16 @@
           --k3s-extra-args '--tls-san {{tls_san_vip}}' \
           --k3s-extra-args '--tls-san {{tls_san_vip_dns}}' \
           --k3s-extra-args '--disable servicelb' \
-          --k3s-extra-args '--disable trefik' \
+          --k3s-extra-args '--disable traefik' \
           --cluster \
           --k3s-version {{k3s_version}} \
-          --k3s-channel stable
+          --k3s-channel stable \
           --user {{ansible_user}} \
           --local-path $HOME/.kube/config \
           --merge \
           --context {{kubeconfig_context}}
       delegate_to: localhost
+      become: false
     # https://kube-vip.io/docs/installation/daemonset/
     - name: Add kube-vip as a DaemonSet for all control plane nodes
       shell: kubectl apply -f https://kube-vip.io/manifests/rbac.yaml
