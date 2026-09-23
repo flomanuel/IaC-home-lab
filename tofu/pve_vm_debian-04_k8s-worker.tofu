@@ -5,7 +5,7 @@ resource "cloudflare_dns_record" "k8s-worker-1_dot_prod_dot_home" {
   type    = "A"
   ttl     = 1
   proxied = false
-  comment = "tofu;home-lab;proxmox"
+  comment = "tofu;home-lab;K8s"
 }
 
 resource "cloudflare_dns_record" "k8s-worker-1_dot_mgmt_dot_home" {
@@ -15,7 +15,7 @@ resource "cloudflare_dns_record" "k8s-worker-1_dot_mgmt_dot_home" {
   type    = "A"
   ttl     = 1
   proxied = false
-  comment = "tofu;home-lab;proxmox"
+  comment = "tofu;home-lab;K8s"
 }
 
 module "k8s-worker-1" {
@@ -35,13 +35,13 @@ module "k8s-worker-1" {
 
   cores   = 4
   memory  = 8192
-  disk_gb = 40
+  disk_gb = 60
 
   tags  = ["K8s","K8s_worker"]
 
   global_security_groups = [
     "ssh", "https", "http",
-    "k8s_kubelet_metric", "k8s_nodeport", "k8s_cni_health", "k8s_cni_vxlan", "metallb_memberlist", # K8s rules for all nodes
+    "k8s_kubelet_metric", "k8s_nodeport", "k8s_cni_vxlan", "metallb_memberlist", # K8s rules for all nodes
   ]
 }
 

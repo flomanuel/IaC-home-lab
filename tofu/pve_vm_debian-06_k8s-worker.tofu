@@ -1,0 +1,39 @@
+resource "cloudflare_dns_record" "k8s-worker-3_dot_prod_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "k8s-worker-3.prod.home"
+  content = "10.50.0.16"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;K8s"
+}
+
+module "k8s-worker-3" {
+  source       = "./modules/vm"
+  common       = local.common
+  create_after = [module.k8s-worker-2]
+
+  name          = "k8s-worker-3"
+  image         = "debian"
+  snippet       = "qemu_guest_agent_debian"
+  agent_enabled = true
+
+  networks = [
+    { vlan = "prod", ip = "10.50.0.16/16" },
+  ]
+
+  cores   = 4
+  memory  = 8192
+  disk_gb = 60
+
+  tags = ["K8s", "K8s_worker"]
+
+  global_security_groups = [
+    "ssh", "https", "http",
+    "k8s_kubelet_metric", "k8s_nodeport", "k8s_cni_vxlan", "metallb_memberlist", # K8s rules for all nodes
+  ]
+}
+
+output "k8s-worker-3" {
+  value = module.k8s-worker-3.summary
+}

@@ -49,3 +49,13 @@ resource "cloudflare_dns_record" "truenas-old_dot_mgmt_dot_home" {
   proxied = false
   comment = "tofu;home-lab;TrueNAS"
 }
+
+resource "cloudflare_dns_record" "k8s-prod-1_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "k8s-prod-1.home"
+  content = "10.50.0.10"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;K8s"
+}

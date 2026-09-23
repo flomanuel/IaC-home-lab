@@ -1,11 +1,9 @@
 k8s_packages:
-#  - apt-transport-https
   - curl
   - ca-certificates
   - gnupg
-#  - lsb-release
-#  - chrony
+  - jq
 
-k8s_kernel_modules:
-  - overlay
-  - br_netfilter
+# k8s_kernel_modules:
+#   - overlay
+#   - br_netfilter

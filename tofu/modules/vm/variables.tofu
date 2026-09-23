@@ -59,6 +59,22 @@ variable "disk_gb" {
   default = 20
 }
 
+variable "data_disks" {
+  description = "Additional disks, attached as scsi1, scsi2, ... in list order, e.g. [{ datastore_id = \"local-zfs\", size = 8, serial = \"k3s-etcd\" }]. Size in GiB. The serial makes the disk show up in the guest as /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_<serial>. Leave empty (the default) for none."
+  type = list(object({
+    datastore_id = string
+    size         = number
+    serial       = string
+    backup       = optional(bool, true)
+  }))
+  default = []
+
+  validation {
+    condition     = alltrue([for d in var.data_disks : length(d.serial) <= 20])
+    error_message = "A data disk serial must be at most 20 characters long."
+  }
+}
+
 variable "vm_id" {
   description = "Fixed VMID; null lets Proxmox pick one."
   type        = number

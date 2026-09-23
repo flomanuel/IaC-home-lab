@@ -1,0 +1,10 @@
+---
+# Must match the `serial` of the etcd disk in the tofu `data_disks` of the server VMs.
+k8s_etcd_disk_serial: k3s-etcd
+k8s_etcd_disk_device: "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_{{ k8s_etcd_disk_serial }}"
+
+# K3s keeps etcd in <mount>/etcd and, by default, its snapshots in <mount>/snapshots.
+# Mounted one level above etcd/ because K3s may rename that directory (etcd-old-<ts>).
+k8s_etcd_disk_mount_path: /var/lib/rancher/k3s/server/db
+k8s_etcd_disk_fstype: ext4
+k8s_etcd_disk_mount_opts: defaults,noatime

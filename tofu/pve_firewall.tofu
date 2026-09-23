@@ -1,7 +1,6 @@
 locals {
   # Firewall sources for the K8s rules below. Add new nodes here.
   k8s_control_ips = join(",", [module.k8s-control-1.primary_ip, "127.0.0.1"])
-  k8s_lb_ip       = module.k8s-lb-1.primary_ip
   k8s_node_ips = join(",", [
     module.k8s-control-1.primary_ip,
     module.k8s-worker-1.primary_ip,
@@ -9,8 +8,7 @@ locals {
     module.k8s-worker-3.primary_ip,
     "127.0.0.1"
   ])
-  k8s_cluster_ips = "${local.k8s_node_ips},${local.k8s_lb_ip}" # nodes + LB
-  admin_ips       = "10.50.0.1"                                # WireGuard: NAT
+  admin_ips = "10.50.0.1" # WireGuard: NAT
 }
 
 locals {
@@ -25,42 +23,36 @@ locals {
     https = [
       { type = "in", action = "ACCEPT", proto = "tcp", dport = "443", comment = "HTTPS" },
     ]
-    # https://docs.rke2.io/install/requirements#inbound-network-rules
-    # Sources follow the RKE2 docs (nodes only; server nodes for etcd). The LB
-    # is included where traffic passes through HAProxy, because the control
-    # node then sees the LB's IP instead of the client's.
+    # https://docs.k3s.io/installation/requirements#inbound-rules-for-k3s-nodes
+    # Sources follow the K3s docs (nodes only; server nodes for etcd). The
+    # kube-vip control-plane VIP (ARP mode) moves between the server nodes;
+    # the rules below set no `dest`, so they also cover traffic to the VIP.
 
-    # Attached to the control node: API access from nodes and the LB.
+    # Attached to the server nodes: API access and agent registration from nodes.
     k8s_api_cluster = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "6443", source = local.k8s_cluster_ips, comment = "RKE2 API (nodes + LB)" },
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "6443", source = local.k8s_node_ips, comment = "K3s API + registration (nodes)" },
     ]
-    # Attached to the LB: kubectl/helm/Lens from the admin laptop.
+    # Attached to the server nodes: kubectl/helm/Lens from the admin laptop.
     k8s_api_admin = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "6443", source = local.admin_ips, comment = "RKE2 API (admin)" },
-    ]
-    k8s_registration = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "9345", source = local.k8s_cluster_ips, comment = "RKE2 Registration" },
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "6443", source = local.admin_ips, comment = "K3s API (admin)" },
     ]
     k8s_kubelet_metric = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "10250", source = local.k8s_node_ips, comment = "RKE2 Metrics" },
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "10250", source = local.k8s_node_ips, comment = "Kubelet metrics" },
     ]
     k8s_etcd_client = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "2379", source = local.k8s_control_ips, comment = "RKE2 etcd client" },
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "2379", source = local.k8s_control_ips, comment = "K3s etcd client" },
     ]
     k8s_etcd_peer = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "2380", source = local.k8s_control_ips, comment = "RKE2 etcd peer" },
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "2380", source = local.k8s_control_ips, comment = "K3s etcd peer" },
     ]
     k8s_etcd_metrics = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "2381", source = local.k8s_control_ips, comment = "RKE2 etcd metrics" },
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "2381", source = local.k8s_control_ips, comment = "K3s etcd metrics" },
     ]
     k8s_nodeport = [
       { type = "in", action = "ACCEPT", proto = "tcp", dport = "30000:32767", source = local.k8s_node_ips, comment = "K8s NodePort range" },
     ]
-    k8s_cni_health = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "9099", source = local.k8s_node_ips, comment = "K8s Canal CNI health check" },
-    ]
     k8s_cni_vxlan = [
-      { type = "in", action = "ACCEPT", proto = "udp", dport = "8472", source = local.k8s_node_ips, comment = "K8s CNI VXLAN communication" },
+      { type = "in", action = "ACCEPT", proto = "udp", dport = "8472", source = local.k8s_node_ips, comment = "K3s flannel VXLAN" },
     ]
     metallb_memberlist = [
       { type = "in", action = "ACCEPT", proto = "tcp", dport = "7946", source = local.k8s_node_ips, comment = "MetalLB memberlist" },

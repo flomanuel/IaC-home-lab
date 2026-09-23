@@ -1,0 +1,42 @@
+---
+# Formats and mounts the dedicated SSD disk (tofu `data_disks`) for the K3s etcd datastore.
+# Must run before K3s is installed, otherwise K3s writes its db to the OS disk.
+- name: Check that the etcd disk is attached
+  stat:
+    path: "{{ k8s_etcd_disk_device }}"
+  register: k8s_etcd_disk_stat
+
+- name: Fail if the etcd disk is missing
+  assert:
+    that: k8s_etcd_disk_stat.stat.exists
+    fail_msg: "{{ k8s_etcd_disk_device }} not found. Is the data disk with serial '{{ k8s_etcd_disk_serial }}' attached in tofu?"
+    quiet: true
+
+# Whole disk, no partition table. Never reformats a disk that already has a filesystem.
+- name: Create filesystem on the etcd disk
+  community.general.filesystem:
+    dev: "{{ k8s_etcd_disk_device }}"
+    fstype: "{{ k8s_etcd_disk_fstype }}"
+    opts: "-m 0 -L {{ k8s_etcd_disk_serial }}"
+
+- name: Read the filesystem UUID
+  command: "blkid -s UUID -o value {{ k8s_etcd_disk_device }}"
+  register: k8s_etcd_disk_uuid
+  changed_when: false
+
+- name: Mount the etcd disk
+  ansible.posix.mount:
+    src: "UUID={{ k8s_etcd_disk_uuid.stdout }}"
+    path: "{{ k8s_etcd_disk_mount_path }}"
+    fstype: "{{ k8s_etcd_disk_fstype }}"
+    opts: "{{ k8s_etcd_disk_mount_opts }}"
+    state: mounted
+
+# Applies to the root of the mounted filesystem, not the underlying directory.
+- name: Restrict permissions on the mounted etcd directory
+  file:
+    path: "{{ k8s_etcd_disk_mount_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"

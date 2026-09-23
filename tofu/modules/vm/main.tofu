@@ -35,6 +35,21 @@ resource "proxmox_virtual_environment_vm" "this" {
     iothread     = true
   }
 
+  dynamic "disk" {
+    for_each = var.data_disks # disk.key is the list index
+    content {
+      datastore_id = disk.value.datastore_id
+      interface    = "scsi${disk.key + 1}"
+      file_format  = "raw"
+      size         = disk.value.size
+      serial       = disk.value.serial
+      backup       = disk.value.backup
+      discard      = "on"
+      iothread     = true
+      ssd          = true
+    }
+  }
+
   # Cloud images use the serial console.
   serial_device {}
 

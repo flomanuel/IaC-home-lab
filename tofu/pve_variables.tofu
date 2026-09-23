@@ -49,6 +49,12 @@ variable "storage_disks" {
   default     = "vm_pool"
 }
 
+variable "storage_fast_disks" {
+  description = "SSD storage for IO-sensitive data disks (e.g. the K3s etcd disk)."
+  type        = string
+  default     = "local-zfs"
+}
+
 variable "vm_user" {
   description = "Admin user created by cloud-init in every Linux VM (must match admin_user in ansible/inventory/group_vars/all/main.yml)."
   type        = string

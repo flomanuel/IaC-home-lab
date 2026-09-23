@@ -5,26 +5,26 @@
     state: present
     update_cache: true
 
-- name: Ensure kernel modules load at boot
-  copy:
-    dest: /etc/modules-load.d/k8s.conf
-    mode: "0644"
-    content: |
-      {% for module in k8s_kernel_modules %}
-      {{ module }}
-      {% endfor %}
+# - name: Ensure kernel modules load at boot
+#   copy:
+#     dest: /etc/modules-load.d/k8s.conf
+#     mode: "0644"
+#     content: |
+#       {% for module in k8s_kernel_modules %}
+#       {{ module }}
+#       {% endfor %}
 
-- name: Load kernel modules now
-  command: "modprobe {{ item }}"
-  loop: "{{ k8s_kernel_modules }}"
-  changed_when: false
+# - name: Load kernel modules now
+#   command: "modprobe {{ item }}"
+#   loop: "{{ k8s_kernel_modules }}"
+#   changed_when: false
 
-- name: Configure sysctl settings for Kubernetes
-  copy:
-    dest: /etc/sysctl.d/90-k8s.conf
-    mode: "0644"
-    src: 90-k8s.conf
-  notify: apply sysctl
+# - name: Configure sysctl settings for Kubernetes
+#   copy:
+#     dest: /etc/sysctl.d/90-k8s.conf
+#     mode: "0644"
+#     src: 90-k8s.conf
+#   notify: apply sysctl
 
 - name: Disable swap for current session
   command: swapoff -a
@@ -36,9 +36,3 @@
     path: /etc/fstab
     regexp: '^([^#\n]*\sswap\s.*)$'
     replace: '#\1'
-
-# - name: Enable service chrony
-#   systemd_service:
-#     name: chrony
-#     enabled: true
-#     masked: no
