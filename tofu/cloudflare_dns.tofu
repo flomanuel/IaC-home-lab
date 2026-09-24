@@ -53,9 +53,19 @@ resource "cloudflare_dns_record" "truenas-old_dot_mgmt_dot_home" {
 resource "cloudflare_dns_record" "k8s-prod-1_dot_home" {
   zone_id = var.zone_id_1
   name    = "k8s-prod-1.home"
-  content = "10.50.0.10"
+  content = "10.50.0.10" # virtual ip address for the control plane (kube-vip load balancer)
   type    = "A"
   ttl     = 1
   proxied = false
   comment = "tofu;home-lab;K8s"
+}
+
+resource "cloudflare_dns_record" "wildcard_dot_k8s-prod-1_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "*.k8s-prod-1.home"
+  content = "10.50.2.100" # ip address of the traefik service load balancer
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;K8s;traefik"
 }
