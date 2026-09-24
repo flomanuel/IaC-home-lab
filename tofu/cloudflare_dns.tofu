@@ -1,5 +1,7 @@
 # DNS records that are not directly connected to LXC or a Proxmox VM.
 
+# ====== Proxmox 1 ======
+
 resource "cloudflare_dns_record" "proxmox-1_dot_mgmt_dot_home" {
   zone_id = var.zone_id_1
   name    = "proxmox-1.mgmt.home"
@@ -10,6 +12,8 @@ resource "cloudflare_dns_record" "proxmox-1_dot_mgmt_dot_home" {
   comment = "tofu;home-lab;proxmox"
 }
 
+# ====== TrueNAS Containers ======
+
 resource "cloudflare_dns_record" "proxmox-backup-server_dot_mgmt_dot_home" {
   zone_id = var.zone_id_1
   name    = "proxmox-backup-server.mgmt.home"
@@ -17,8 +21,30 @@ resource "cloudflare_dns_record" "proxmox-backup-server_dot_mgmt_dot_home" {
   type    = "A"
   ttl     = 1
   proxied = false
-  comment = "tofu;home-lab;proxmox"
+  comment = "tofu;home-lab;TrueNAS"
 }
+
+resource "cloudflare_dns_record" "s3-storage_dot_mgmt_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "s3-storage.mgmt.home"
+  content = "10.20.1.148"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;TrueNAS"
+}
+
+resource "cloudflare_dns_record" "s3-storage_dot_data_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "s3-storage.data.home"
+  content = "10.30.1.128"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;TrueNAS"
+}
+
+# ====== TrueNAS Hosts ======
 
 resource "cloudflare_dns_record" "truenas_dot_data_dot_home" {
   zone_id = var.zone_id_1
@@ -49,6 +75,8 @@ resource "cloudflare_dns_record" "truenas-old_dot_mgmt_dot_home" {
   proxied = false
   comment = "tofu;home-lab;TrueNAS"
 }
+
+# ====== Kubernetes ======
 
 resource "cloudflare_dns_record" "k8s-prod-1_dot_home" {
   zone_id = var.zone_id_1
