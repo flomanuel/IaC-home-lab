@@ -1,0 +1,14 @@
+# https://cert-manager.io/docs/usage/certificate/
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nginx-ingress-route-certificate
+  namespace: default # use the namespace that the target application was deployed to
+spec:
+  # Secret names are always required.
+  secretName: nginx-certificate-secret
+  issuerRef:
+    name: cloudflare-cluster-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - nginx.k8s-prod-1.home.sauers.link

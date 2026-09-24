@@ -12,3 +12,6 @@ crash.log
 *.retry
 k3s-kubeconfig.yml
 .DS_Store
+cert-manager-keyring-2021-09-20-1020CF3C033D4F35BAE1C19E1226061C665DF13E.gpg
+k3s_setup/3_cert-manager/2_kubernetes/secret.yml
+k3s_setup/3_cert-manager/2_kubernetes/1_secret.yml
