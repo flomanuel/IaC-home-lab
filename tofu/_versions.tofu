@@ -10,5 +10,8 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 5"
     }
+    netbird = {
+      source = "registry.terraform.io/netbirdio/netbird"
+    }
   }
 }

@@ -15,3 +15,8 @@ provider "proxmox" {
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
+
+provider "netbird" {
+  token          = var.netbird_token
+  management_url = "https://api.netbird.io"
+}

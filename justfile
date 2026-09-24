@@ -41,6 +41,10 @@ validate:
 output:
     cd {{ tofu_dir }} && tofu output
 
+[group('tofu')]
+import res id:
+    cd {{ tofu_dir }} && tofu import {{res}} {{id}}
+
 # ---------- Ansible ----------
 
 # Install required Ansible collections
