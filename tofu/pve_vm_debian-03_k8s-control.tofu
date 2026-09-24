@@ -42,7 +42,7 @@ module "k8s-control-1" {
     { datastore_id = var.storage_fast_disks, size = 8, serial = "k3s-etcd" },
   ]
 
-  tags = ["K8s", "K8s_control"]
+  tags = ["k8s", "k8s_control"]
 
   global_security_groups = [
     "ssh", "http", "https",

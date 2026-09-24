@@ -1,0 +1,8 @@
+# range of ip addresses from the home lab prod network that kube-vip can distribute to Services of type LoadBalancer
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubevip
+  namespace: kube-system
+data:
+  range-global: 10.50.2.100-10.50.2.199

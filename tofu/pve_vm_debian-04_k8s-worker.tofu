@@ -37,7 +37,7 @@ module "k8s-worker-1" {
   memory  = 8192
   disk_gb = 60
 
-  tags  = ["K8s","K8s_worker"]
+  tags  = ["k8s","k8s_worker"]
 
   global_security_groups = [
     "ssh", "https", "http",

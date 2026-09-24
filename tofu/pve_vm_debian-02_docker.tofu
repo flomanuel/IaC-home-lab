@@ -37,7 +37,7 @@ module "debian-02" {
   memory  = 8192
   disk_gb = 40
 
-  tags  = ["docker-compose","DBs","secrets"]
+  tags  = ["docker-compose","db","secrets"]
 
   global_security_groups = ["ssh", "http", "https"]
 

@@ -7,7 +7,7 @@
   gather_facts: true
   tasks:
     - name: Run k3sup (agent)
-      shell: |
+      ansible.builtin.shell: |
         k3sup join \
           --ip {{ hostvars[inventory_hostname]['ansible_host'] }} \
           --server-ip {{k3s_server}} \

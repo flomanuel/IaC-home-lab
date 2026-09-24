@@ -3,13 +3,13 @@
 # Must run before K3s is installed, otherwise K3s writes its db to the OS disk.
 # Looked up by serial, as udev's /dev/disk/by-id link uses the Proxmox drive name (drive-scsiN), not the serial.
 - name: Find the etcd disk by its serial
-  shell: lsblk -dnpo NAME,SERIAL | awk '$2 == "{{ k8s_etcd_disk_serial }}" { print $1 }'
+  ansible.builtin.shell: lsblk -dnpo NAME,SERIAL | awk '$2 == "{{ k8s_etcd_disk_serial }}" { print $1 }'
   register: k8s_etcd_disk_device
   changed_when: false
   check_mode: false
 
 - name: Fail unless exactly one etcd disk is found
-  assert:
+  ansible.builtin.assert:
     that: k8s_etcd_disk_device.stdout_lines | length == 1
     fail_msg: "Expected one disk with serial '{{ k8s_etcd_disk_serial }}', found {{ k8s_etcd_disk_device.stdout_lines }}. Is the data disk attached in tofu?"
     quiet: true
@@ -22,7 +22,7 @@
     opts: "-m 0 -L {{ k8s_etcd_disk_serial }}"
 
 - name: Read the filesystem UUID
-  command: "blkid -s UUID -o value {{ k8s_etcd_disk_device.stdout }}"
+  ansible.builtin.command: "blkid -s UUID -o value {{ k8s_etcd_disk_device.stdout }}"
   register: k8s_etcd_disk_uuid
   changed_when: false
 
@@ -36,7 +36,7 @@
 
 # Applies to the root of the mounted filesystem, not the underlying directory.
 - name: Restrict permissions on the mounted etcd directory
-  file:
+  ansible.builtin.file:
     path: "{{ k8s_etcd_disk_mount_path }}"
     state: directory
     owner: root
