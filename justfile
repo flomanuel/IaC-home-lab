@@ -18,6 +18,10 @@ plan:
     cd {{ tofu_dir }} && tofu plan
 
 [group('tofu')]
+plan-out:
+    cd {{ tofu_dir }} && tofu plan -out tfplan
+
+[group('tofu')]
 apply:
     cd {{ tofu_dir }} && tofu apply
 

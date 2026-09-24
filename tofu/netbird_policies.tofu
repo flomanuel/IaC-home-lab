@@ -1,3 +1,6 @@
+# Rules target network resources/peers via `destination_resource`;
+# `destinations` only accepts group IDs.
+
 resource "netbird_policy" "admin_k8s" {
   name        = "Admin: K8s API"
   description = "Allow admins to access the K8s API port."
@@ -9,9 +12,13 @@ resource "netbird_policy" "admin_k8s" {
     enabled       = true
     protocol      = "tcp"
     ports         = ["6443"]
-    name          = "K8s api access"
+    name          = "Admin: K8s API"
+    description   = "Allow admins to access the K8s API port on the control plane."
     sources       = [netbird_group.k8s_admins.id]
-    destinations  = [netbird_network_resource.helldiek_prod.id]
+    destination_resource = {
+      id   = netbird_network_resource.helldiek_k8s_control_plane.id
+      type = "subnet"
+    }
   }
 }
 
@@ -25,15 +32,19 @@ resource "netbird_policy" "admin_mgmt" {
     bidirectional = false
     enabled       = true
     protocol      = "all"
-    name          = "Management-access"
+    name          = "Admin: MGMT"
+    description   = "Allow admins access to the management network in Helldiek, Bassum, Germany."
     sources       = [netbird_group.admins_baseline.id]
-    destinations  = [netbird_network_resource.helldiek_mgmt.id]
+    destination_resource = {
+      id   = netbird_network_resource.helldiek_mgmt.id
+      type = "subnet"
+    }
   }
 }
 
 resource "netbird_policy" "admin_tp-link" {
   name        = "Admin: TP-Link UI"
-  description = "Allow access to the TP-Link managed switch (Helldiek, Bassum, Germany) web ui."
+  description = "Allow access to the TP-Link managed switch (Helldiek, Bassum, Germany) web UI."
   enabled     = true
 
   rule {
@@ -42,9 +53,13 @@ resource "netbird_policy" "admin_tp-link" {
     enabled       = true
     protocol      = "tcp"
     ports         = ["80", "443"]
-    name          = "TP-Link-access"
+    name          = "Admin: TP-Link UI"
+    description   = "Allow access to the TP-Link managed switch (Helldiek, Bassum, Germany) web UI."
     sources       = [netbird_group.admins_baseline.id]
-    destinations  = [netbird_network_resource.helldiek_tp-link.id]
+    destination_resource = {
+      id   = netbird_network_resource.helldiek_tp-link.id
+      type = "host"
+    }
   }
 }
 
@@ -59,9 +74,13 @@ resource "netbird_policy" "sauers_prod" {
     enabled       = true
     protocol      = "tcp"
     ports         = ["80", "443"]
-    name          = "Sauers prod"
+    name          = "Sauers: PROD (web apps)"
+    description   = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany."
     sources       = [netbird_group.sauers.id]
-    destinations  = [netbird_network_resource.helldiek_prod.id]
+    destination_resource = {
+      id   = netbird_network_resource.helldiek_prod.id
+      type = "subnet"
+    }
   }
 }
 
@@ -76,9 +95,13 @@ resource "netbird_policy" "sauers_data" {
     enabled       = true
     protocol      = "tcp"
     ports         = ["445"]
-    name          = "Sauers data"
+    name          = "Sauers: Data access"
+    description   = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany."
     sources       = [netbird_group.sauers.id]
-    destinations  = [netbird_network_resource.helldiek_data.id]
+    destination_resource = {
+      id   = netbird_network_resource.helldiek_data.id
+      type = "subnet"
+    }
   }
 }
 
@@ -92,9 +115,13 @@ resource "netbird_policy" "sauers_helldiek-peer" {
     bidirectional = false
     enabled       = true
     protocol      = "all"
-    name          = "TP-Link-access"
+    name          = "Sauers: Helldiek peer"
+    description   = "Allow sauers to access the dev peer in order to use the DNS on the peer's host (OPNsense)."
     sources       = [netbird_group.sauers.id]
-    destinations  = [data.netbird_network_router.opnsense_helldiek.id]
+    destination_resource = {
+      id   = data.netbird_peer.opnsense_helldiek.id
+      type = "peer"
+    }
   }
 }
 
@@ -109,8 +136,12 @@ resource "netbird_policy" "admin_prod" {
     enabled       = true
     protocol      = "tcp"
     ports         = ["22"]
-    name          = "TP-Link-access"
+    name          = "Admin: PROD access"
+    description   = "Access to admin-endpoints in PROD"
     sources       = [netbird_group.admins_baseline.id]
-    destinations  = [netbird_network_resource.helldiek_prod.id]
+    destination_resource = {
+      id   = netbird_network_resource.helldiek_prod.id
+      type = "subnet"
+    }
   }
 }

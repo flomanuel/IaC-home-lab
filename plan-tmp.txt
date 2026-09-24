@@ -1,0 +1,363 @@
+OpenTofu used the selected providers to generate the following execution plan. Resource actions are indicated with the
+following symbols:
+  + create
+  ~ update in-place (current -> planned)
+ <= read (data resources)
+
+OpenTofu will perform the following actions:
+
+  # data.netbird_network_router.opnsense_helldiek will be read during apply
+  # (depends on a resource or a module with changes pending)
+ <= data "netbird_network_router" "opnsense_helldiek" {
+      + enabled     = (known after apply)
+      + id          = "dae5f4bl0ubs73bis6dg"
+      + masquerade  = (known after apply)
+      + metric      = (known after apply)
+      + network_id  = "dae6gmrl0ubs73celvlg"
+      + peer        = (known after apply)
+      + peer_groups = (known after apply)
+    }
+
+  # netbird_account_settings.settings will be created
+  + resource "netbird_account_settings" "settings" {
+      + auto_update_version                    = (known after apply)
+      + dns_domain                             = (known after apply)
+      + groups_propagation_enabled             = true
+      + id                                     = (known after apply)
+      + jwt_allow_groups                       = (known after apply)
+      + jwt_groups_claim_name                  = (known after apply)
+      + jwt_groups_enabled                     = (known after apply)
+      + lazy_connection_enabled                = (known after apply)
+      + network_range                          = (known after apply)
+      + network_traffic_logs_enabled           = (known after apply)
+      + network_traffic_logs_groups            = (known after apply)
+      + network_traffic_packet_counter_enabled = (known after apply)
+      + peer_approval_enabled                  = (known after apply)
+      + peer_expose_enabled                    = (known after apply)
+      + peer_expose_groups                     = (known after apply)
+      + peer_inactivity_expiration             = (known after apply)
+      + peer_inactivity_expiration_enabled     = (known after apply)
+      + peer_login_expiration                  = 86400
+      + peer_login_expiration_enabled          = (known after apply)
+      + regular_users_view_blocked             = (known after apply)
+      + routing_peer_dns_resolution_enabled    = (known after apply)
+      + user_approval_required                 = true
+    }
+
+  # netbird_group.admins_baseline will be updated in-place
+  ~ resource "netbird_group" "admins_baseline" {
+        id        = "dae6i8bl0ubs73cfr1ag"
+        name      = "Admins (baseline)"
+      ~ peers     = [
+          - "dae7hfjl0ubs73d8cq9g",
+          - "dae9fbjl0ubs73ekf5e0",
+          - "daea09ifadhs73bilsb0",
+        ]
+        # (2 unchanged attributes hidden)
+    }
+
+  # netbird_group.k8s_admins will be updated in-place
+  ~ resource "netbird_group" "k8s_admins" {
+        id        = "daofukrl0ubs73c4r020"
+        name      = "K8s Admins"
+      ~ peers     = [
+          - "dae7hfjl0ubs73d8cq9g",
+          - "dae9fbjl0ubs73ekf5e0",
+          - "daea09ifadhs73bilsb0",
+        ]
+        # (2 unchanged attributes hidden)
+    }
+
+  # netbird_group.opnsense_helldiek will be updated in-place
+  ~ resource "netbird_group" "opnsense_helldiek" {
+        id        = "dae5dlafadhs739du1sg"
+        name      = "OPNsense_Helldiek"
+      ~ peers     = [
+          - "dae5f4bl0ubs73bis6dg",
+        ]
+        # (2 unchanged attributes hidden)
+    }
+
+  # netbird_group.sauers will be updated in-place
+  ~ resource "netbird_group" "sauers" {
+        id        = "dae7dpjl0ubs73d5n7qg"
+        name      = "sauers"
+      ~ peers     = [
+          - "dae7hfjl0ubs73d8cq9g",
+          - "dae9fbjl0ubs73ekf5e0",
+          - "daea09ifadhs73bilsb0",
+          - "daepj2bl0ubs73am6tag",
+        ]
+        # (2 unchanged attributes hidden)
+    }
+
+  # netbird_nameserver_group.dns_cloudflare will be updated in-place
+  ~ resource "netbird_nameserver_group" "dns_cloudflare" {
+      ~ description            = "Cloudflare DNS Servers" -> "Cloudflare fallback"
+      ~ enabled                = false -> true
+        id                     = "dakqn5bl0ubs73cttlf0"
+        name                   = "Cloudflare"
+      ~ primary                = true -> false
+        # (4 unchanged attributes hidden)
+    }
+
+  # netbird_nameserver_group.dns_helldiek will be updated in-place
+  ~ resource "netbird_nameserver_group" "dns_helldiek" {
+      ~ description            = "DNS server for Helldiek (TLD 'internal')" -> "DNS server located in Helldiek"
+        id                     = "dae6fkjl0ubs73cdt3dg"
+      ~ name                   = "OPNsense Helldiek ('.internal')" -> "OPNsense Helldiek"
+      ~ nameservers            = [
+          - {
+              - ip      = "1.1.1.1" -> null
+              - ns_type = "udp" -> null
+              - port    = 53 -> null
+            },
+          - {
+              - ip      = "9.9.9.9" -> null
+              - ns_type = "udp" -> null
+              - port    = 53 -> null
+            },
+            # (1 unchanged element hidden)
+        ]
+        # (5 unchanged attributes hidden)
+    }
+
+  # netbird_nameserver_group.dns_quad9 will be updated in-place
+  ~ resource "netbird_nameserver_group" "dns_quad9" {
+      ~ description            = "Quad9 DNS Servers" -> "Quad9 fallback"
+      ~ enabled                = false -> true
+        id                     = "dakqqiafadhs73chgh2g"
+      ~ name                   = "Quad9 DNS" -> "Quad9"
+      ~ primary                = true -> false
+        # (4 unchanged attributes hidden)
+    }
+
+  # netbird_network.helldiek will be updated in-place
+  ~ resource "netbird_network" "helldiek" {
+      ~ description = "Network for Home Lab in Helldiek, Bassum, Germany." -> "Network for the Home Lab in Helldiek, Bassum, Germany."
+        id          = "dae6gmrl0ubs73celvlg"
+      ~ name        = "Helldiek Network" -> "Helldiek"
+      ~ policies    = [
+          - "dae6jm2fadhs73a1hgi0",
+          - "dae6i8ifadhs73a0u34g",
+          - "daofugjl0ubs73c4n1f0",
+          - "dae6pcbl0ubs73cl1n5g",
+          - "daejngjl0ubs73dtbij0",
+          - "dae6rrifadhs73a4vh0g",
+        ] -> (known after apply)
+      ~ resources   = [
+          - "dae6jm3l0ubs73cgsou0",
+          - "dae6i8afadhs73a0u2rg",
+          - "dae6pcafadhs73a3tl5g",
+          - "dae6rrjl0ubs73cmtcug",
+        ] -> (known after apply)
+      ~ routers     = [
+          - "dae6il3l0ubs73cg4c9g",
+        ] -> (known after apply)
+    }
+
+  # netbird_network_resource.helldiek_data will be updated in-place
+  ~ resource "netbird_network_resource" "helldiek_data" {
+      ~ address     = "10.30.0.0/16" -> "10.20.0.0/16"
+      ~ description = "Data network for SMB and NFS shares." -> "Network containing the management web UI for both TrueNAS and Proxmox."
+        id          = "dae6rrjl0ubs73cmtcug"
+      ~ name        = "Data Network" -> "Management Network"
+        # (3 unchanged attributes hidden)
+    }
+
+  # netbird_network_resource.helldiek_mgmt will be updated in-place
+  ~ resource "netbird_network_resource" "helldiek_mgmt" {
+      ~ address     = "10.20.0.0/16" -> "10.30.0.0/16"
+      ~ description = "Network containing the management web UI for both TrueNAS and Proxmox." -> "Data network for SMB and NFS shares."
+        id          = "dae6i8afadhs73a0u2rg"
+      ~ name        = "Management Network" -> "Data Network"
+        # (3 unchanged attributes hidden)
+    }
+
+  # netbird_network_resource.helldiek_tp-link will be updated in-place
+  ~ resource "netbird_network_resource" "helldiek_tp-link" {
+      ~ description = "TP-Link managed switch management web UI." -> "TP-Link managed switch web ui."
+        id          = "dae6jm3l0ubs73cgsou0"
+        name        = "TP-Link Web UI"
+        # (4 unchanged attributes hidden)
+    }
+
+  # netbird_policy.admin_k8s will be updated in-place
+  ~ resource "netbird_policy" "admin_k8s" {
+        id                    = "daofugjl0ubs73c4n1f0"
+        name                  = "Admin: K8s API"
+      ~ source_posture_checks = [] -> (known after apply)
+        # (2 unchanged attributes hidden)
+
+      ~ rule {
+          + authorized_groups    = (known after apply)
+          - description          = "Allow admins to access the K8s API port." -> null
+          ~ destination_resource = {
+              - id   = "dae6pcafadhs73a3tl5g"
+              - type = "subnet"
+            } -> (known after apply)
+          + destinations         = [
+              + "dae6pcafadhs73a3tl5g",
+            ]
+          ~ id                   = "daofugjl0ubs73c4n1f0" -> (known after apply)
+          ~ name                 = "Admin: K8s API" -> "K8s api access"
+          + port_ranges          = (known after apply)
+          + source_resource      = (known after apply)
+            # (6 unchanged attributes hidden)
+        }
+    }
+
+  # netbird_policy.admin_mgmt will be updated in-place
+  ~ resource "netbird_policy" "admin_mgmt" {
+        id                    = "dae6i8ifadhs73a0u34g"
+        name                  = "Admin: MGMT"
+      ~ source_posture_checks = [] -> (known after apply)
+        # (2 unchanged attributes hidden)
+
+      ~ rule {
+          + authorized_groups    = (known after apply)
+          - description          = "Allow admins access to the management network in Helldiek, Bassum, Germany." -> null
+          ~ destination_resource = {
+              - id   = "dae6i8afadhs73a0u2rg"
+              - type = "subnet"
+            } -> (known after apply)
+          + destinations         = [
+              + "dae6i8afadhs73a0u2rg",
+            ]
+          ~ id                   = "dae6i8ifadhs73a0u34g" -> (known after apply)
+          ~ name                 = "Admin: MGMT" -> "Management-access"
+          + port_ranges          = (known after apply)
+          + ports                = (known after apply)
+          + source_resource      = (known after apply)
+            # (5 unchanged attributes hidden)
+        }
+    }
+
+  # netbird_policy.admin_prod will be updated in-place
+  ~ resource "netbird_policy" "admin_prod" {
+      + description           = "Access to admin-endpoints in PROD"
+        id                    = "daejngjl0ubs73dtbij0"
+        name                  = "Admin: PROD access"
+      ~ source_posture_checks = [] -> (known after apply)
+        # (1 unchanged attribute hidden)
+
+      ~ rule {
+          + authorized_groups    = (known after apply)
+          ~ destination_resource = {
+              - id   = "dae6pcafadhs73a3tl5g"
+              - type = "subnet"
+            } -> (known after apply)
+          + destinations         = [
+              + "dae6pcafadhs73a3tl5g",
+            ]
+          ~ id                   = "daejngjl0ubs73dtbij0" -> (known after apply)
+          ~ name                 = "Admin: PROD access" -> "TP-Link-access"
+          + port_ranges          = (known after apply)
+          + source_resource      = (known after apply)
+            # (6 unchanged attributes hidden)
+        }
+    }
+
+  # netbird_policy.admin_tp-link will be updated in-place
+  ~ resource "netbird_policy" "admin_tp-link" {
+      ~ description           = "Allow access to the TP-Link managed switch (Helldiek, Bassum, Germany) web UI." -> "Allow access to the TP-Link managed switch (Helldiek, Bassum, Germany) web ui."
+        id                    = "dae6jm2fadhs73a1hgi0"
+        name                  = "Admin: TP-Link UI"
+      ~ source_posture_checks = [] -> (known after apply)
+        # (1 unchanged attribute hidden)
+
+      ~ rule {
+          + authorized_groups    = (known after apply)
+          - description          = "Allow access to the TP-Link managed switch (Helldiek, Bassum, Germany) web UI." -> null
+          ~ destination_resource = {
+              - id   = "dae6jm3l0ubs73cgsou0"
+              - type = "host"
+            } -> (known after apply)
+          + destinations         = [
+              + "dae6jm3l0ubs73cgsou0",
+            ]
+          ~ id                   = "dae6jm2fadhs73a1hgi0" -> (known after apply)
+          ~ name                 = "Admin: TP-Link UI" -> "TP-Link-access"
+          + port_ranges          = (known after apply)
+          + source_resource      = (known after apply)
+            # (6 unchanged attributes hidden)
+        }
+    }
+
+  # netbird_policy.sauers_data will be updated in-place
+  ~ resource "netbird_policy" "sauers_data" {
+        id                    = "dae6rrifadhs73a4vh0g"
+        name                  = "Sauers: Data access"
+      ~ source_posture_checks = [] -> (known after apply)
+        # (2 unchanged attributes hidden)
+
+      ~ rule {
+          + authorized_groups    = (known after apply)
+          - description          = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany." -> null
+          ~ destination_resource = {
+              - id   = "dae6rrjl0ubs73cmtcug"
+              - type = "subnet"
+            } -> (known after apply)
+          + destinations         = [
+              + "dae6rrjl0ubs73cmtcug",
+            ]
+          ~ id                   = "dae6rrifadhs73a4vh0g" -> (known after apply)
+          ~ name                 = "Sauers: Data access" -> "Sauers data"
+          + port_ranges          = (known after apply)
+          + source_resource      = (known after apply)
+            # (6 unchanged attributes hidden)
+        }
+    }
+
+  # netbird_policy.sauers_helldiek-peer will be updated in-place
+  ~ resource "netbird_policy" "sauers_helldiek-peer" {
+        id                    = "dae8vgqfadhs73b48330"
+      ~ name                  = "Sauers: Helldiek peer." -> "Sauers: Helldiek peer"
+      ~ source_posture_checks = [] -> (known after apply)
+        # (2 unchanged attributes hidden)
+
+      ~ rule {
+          + authorized_groups    = (known after apply)
+          - description          = "Allow sauers to access the dev peer in order to use the DNS on the peer's host (OPNsense)." -> null
+          ~ destination_resource = {
+              - id   = "dae5f4bl0ubs73bis6dg"
+              - type = "peer"
+            } -> (known after apply)
+          + destinations         = [
+              + "dae5f4bl0ubs73bis6dg",
+            ]
+          ~ id                   = "dae8vgqfadhs73b48330" -> (known after apply)
+          ~ name                 = "Sauers: Helldiek peer." -> "TP-Link-access"
+          + port_ranges          = (known after apply)
+          + ports                = (known after apply)
+          + source_resource      = (known after apply)
+            # (5 unchanged attributes hidden)
+        }
+    }
+
+  # netbird_policy.sauers_prod will be updated in-place
+  ~ resource "netbird_policy" "sauers_prod" {
+        id                    = "dae6pcbl0ubs73cl1n5g"
+        name                  = "Sauers: PROD (web apps)"
+      ~ source_posture_checks = [] -> (known after apply)
+        # (2 unchanged attributes hidden)
+
+      ~ rule {
+          + authorized_groups    = (known after apply)
+          - description          = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany." -> null
+          ~ destination_resource = {
+              - id   = "dae6pcafadhs73a3tl5g"
+              - type = "subnet"
+            } -> (known after apply)
+          + destinations         = [
+              + "dae6pcafadhs73a3tl5g",
+            ]
+          ~ id                   = "dae6pcbl0ubs73cl1n5g" -> (known after apply)
+          ~ name                 = "Sauers: PROD (web apps)" -> "Sauers prod"
+          + port_ranges          = (known after apply)
+          + source_resource      = (known after apply)
+            # (6 unchanged attributes hidden)
+        }
+    }
+
+Plan: 1 to add, 18 to change, 0 to destroy.
