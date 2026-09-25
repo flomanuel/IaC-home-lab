@@ -86,7 +86,7 @@ resource "netbird_policy" "sauers_prod" {
 
 resource "netbird_policy" "sauers_data" {
   name        = "Sauers: Data access"
-  description = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany."
+  description = "SMB access for sauers"
   enabled     = true
 
   rule {
@@ -96,7 +96,7 @@ resource "netbird_policy" "sauers_data" {
     protocol      = "tcp"
     ports         = ["445"]
     name          = "Sauers: Data access"
-    description   = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany."
+    description   = "SMB access for sauers"
     sources       = [netbird_group.sauers.id]
     destination_resource = {
       id   = netbird_network_resource.helldiek_data.id
@@ -141,6 +141,27 @@ resource "netbird_policy" "admin_prod" {
     sources       = [netbird_group.admins_baseline.id]
     destination_resource = {
       id   = netbird_network_resource.helldiek_prod.id
+      type = "subnet"
+    }
+  }
+}
+
+resource "netbird_policy" "admin_data" {
+  name        = "Admin: DATA access"
+  description = "Access to endpoints in DATA for admins (S3 endpoints)"
+  enabled     = true
+
+  rule {
+    action        = "accept"
+    bidirectional = false
+    enabled       = true
+    protocol      = "tcp"
+    ports         = ["443", "8333"]
+    name          = "Admin: PROD access"
+    description   = "Access to endpoints in DATA that only admins and machine-users need to access."
+    sources       = [netbird_group.admins_baseline.id]
+    destination_resource = {
+      id   = netbird_network_resource.helldiek_data.id
       type = "subnet"
     }
   }
