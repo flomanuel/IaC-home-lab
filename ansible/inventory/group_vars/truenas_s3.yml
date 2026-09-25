@@ -12,7 +12,7 @@ seaweedfs_version: "4.47"
 # Thus, TrueNAS snapshot is a complete backup.
 seaweedfs_data_dir: /mnt/seaweedfs
 
-seaweedfs_data_ip: "{{ lxc_s3_1_data }}" # VLAN data: S3 (https :443 and :8333), Iceberg catalog (:8181)
+seaweedfs_data_ip: "{{ lxc_s3_1_data }}" # VLAN data: S3 (https :443 and :8333)
 seaweedfs_mgmt_ip: "{{ lxc_s3_1 }}" # VLAN mgmt: filer (:8888) and admin (:23646) web UIs
 seaweedfs_data_fqdn: s3-storage.data.home.sauers.link
 seaweedfs_mgmt_fqdn: s3-storage.mgmt.home.sauers.link

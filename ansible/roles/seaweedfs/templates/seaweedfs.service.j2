@@ -10,10 +10,7 @@ RequiresMountsFor={{ seaweedfs_data_dir }}
 [Service]
 User={{ seaweedfs_user }}
 Group={{ seaweedfs_user }}
-# WebDAV and Lance are not used.
-# The Iceberg REST catalog (S3 Table Buckets) runs on its default port 8181,
-# which is also where the admin UI looks for it.
-# s3.externalUrl is the endpoint the catalog hands to Iceberg clients.
+# WebDAV, Iceberg and Lance are not used.
 # mini.options holds the admin UI password, so it stays out of the unit and ps.
 ExecStart=/usr/local/bin/weed mini \
   -dir={{ seaweedfs_store_dir }} \
@@ -21,8 +18,8 @@ ExecStart=/usr/local/bin/weed mini \
   -ip.bind=127.0.0.1 \
   -options={{ seaweedfs_config_dir }}/mini.options \
   -s3.config={{ seaweedfs_config_dir }}/s3.json \
-  -s3.externalUrl=https://{{ seaweedfs_data_fqdn }} \
   -webdav=false \
+  -s3.port.iceberg=0 \
   -s3.port.lance=0 \
   -master.telemetry=false
 Restart=on-failure

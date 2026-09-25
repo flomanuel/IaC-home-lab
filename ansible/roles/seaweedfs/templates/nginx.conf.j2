@@ -42,16 +42,6 @@ http {
     }
   }
 
-  # Iceberg REST catalog for S3 Table Buckets (data VLAN)
-  server {
-    listen {{ seaweedfs_data_ip }}:8181 ssl;
-    server_name {{ seaweedfs_data_fqdn }};
-
-    location / {
-      proxy_pass http://127.0.0.1:8181;
-    }
-  }
-
   # Admin UI (mgmt VLAN). Login: admin / seaweedfs_admin_password.
   server {
     listen {{ seaweedfs_mgmt_ip }}:23646 ssl;
