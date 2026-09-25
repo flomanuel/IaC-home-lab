@@ -17,8 +17,8 @@
     mode: "0644"
 
 - name: Harden sshd
-  ansible.builtin.copy:
-    src: 50-hardening.conf
+  ansible.builtin.template:
+    src: 50-hardening.conf.j2
     dest: /etc/ssh/sshd_config.d/50-hardening.conf
     mode: "0644"
     validate: sshd -t -f %s

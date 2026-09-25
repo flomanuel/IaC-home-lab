@@ -1,0 +1,3 @@
+---
+# sshd PermitRootLogin; hosts managed as root override this (e.g. truenas_s3).
+ssh_permit_root_login: "no"

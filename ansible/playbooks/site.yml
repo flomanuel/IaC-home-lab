@@ -3,3 +3,4 @@
 - import_playbook: docker.yml
 - import_playbook: k8s_control.yml  # 1 - keep the order
 - import_playbook: k8s_worker.yml   # 2
+- import_playbook: truenas_s3.yml

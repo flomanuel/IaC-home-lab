@@ -1,9 +1,13 @@
 ---
 # Local network values.
-truenas_data_ip:  10.30.0.50
-debian01_ip:      10.50.0.11
-debian02_ip:      10.50.0.12
-debian03_ip:      10.50.0.13
-debian04_ip:      10.50.0.14
-debian05_ip:      10.50.0.15
-debian06_ip:      10.50.0.16
+truenas_data_ip: 10.30.0.50
+debian01_ip: 10.50.0.11
+debian02_ip: 10.50.0.12
+debian03_ip: 10.50.0.13
+debian04_ip: 10.50.0.14
+debian05_ip: 10.50.0.15
+debian06_ip: 10.50.0.16
+
+# TrueNAS LXC containers
+lxc_s3_1: 10.20.1.148 # mgmt
+lxc_s3_1_data: 10.30.1.128 # data

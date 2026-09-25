@@ -1,0 +1,71 @@
+# SeaweedFS S3 object store, deployed by playbooks/truenas_s3.yml.
+# Based on the upstream stack (docker/seaweedfs-compose.yml), trimmed to
+# master + volume + filer + s3; webdav and prometheus are dropped.
+# All SeaweedFS state lives on the TrueNAS dataset {{ seaweedfs_data_dir }}.
+# Only nginx publishes ports: it terminates TLS for S3 and the web UIs.
+services:
+  master:
+    image: chrislusf/seaweedfs:{{ seaweedfs_version }}
+    restart: unless-stopped
+    command: 'master -ip=master -ip.bind=0.0.0.0'
+    volumes:
+      - {{ seaweedfs_data_dir }}/master:/data
+
+  volume:
+    image: chrislusf/seaweedfs:{{ seaweedfs_version }}
+    restart: unless-stopped
+    # The image entrypoint adds -dir=/data -max=0 (volume count follows free disk space).
+    command: 'volume -ip=volume -master=master:9333 -ip.bind=0.0.0.0 -port=8080'
+    volumes:
+      - {{ seaweedfs_data_dir }}/volume:/data
+    depends_on:
+      - master
+
+  filer:
+    image: chrislusf/seaweedfs:{{ seaweedfs_version }}
+    restart: unless-stopped
+    # Metadata goes to /data/filerldb2 (leveldb2, the image's default filer.toml).
+    command: 'filer -ip=filer -master=master:9333 -ip.bind=0.0.0.0'
+    volumes:
+      - {{ seaweedfs_data_dir }}/filer:/data
+    depends_on:
+      - master
+      - volume
+
+  s3:
+    image: chrislusf/seaweedfs:{{ seaweedfs_version }}
+    restart: unless-stopped
+    command: 's3 -filer=filer:8888 -ip.bind=0.0.0.0 -config=/etc/seaweedfs/s3.json'
+    volumes:
+      - ./s3.json:/etc/seaweedfs/s3.json:ro
+    depends_on:
+      - master
+      - volume
+      - filer
+
+  nginx:
+    image: nginx:{{ seaweedfs_nginx_version }}
+    restart: unless-stopped
+    # Reload every 6h to pick up certificates renewed by the certbot service.
+    command: ["/bin/sh", "-c", "while :; do sleep 6h & wait $$!; nginx -s reload; done & exec nginx -g 'daemon off;'"]
+    ports:
+      - "{{ seaweedfs_data_ip }}:443:443"    # S3
+      - "{{ seaweedfs_data_ip }}:8333:8333"  # S3
+      - "{{ seaweedfs_mgmt_ip }}:9333:9333"  # master UI
+      - "{{ seaweedfs_mgmt_ip }}:8888:8888"  # filer UI
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - {{ seaweedfs_data_dir }}/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - master
+      - filer
+      - s3
+
+  certbot:
+    image: certbot/dns-cloudflare:{{ seaweedfs_certbot_version }}
+    restart: unless-stopped
+    # Initial issuance is done by the playbook; this only renews.
+    entrypoint: ["/bin/sh", "-c", "trap exit TERM; while :; do certbot renew; sleep 12h & wait $$!; done"]
+    volumes:
+      - {{ seaweedfs_data_dir }}/letsencrypt:/etc/letsencrypt
+      - ./cloudflare.ini:/cloudflare.ini:ro

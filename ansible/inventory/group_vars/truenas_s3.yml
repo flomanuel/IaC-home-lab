@@ -1,0 +1,28 @@
+---
+# use "root" instead of "admin" for the cloud-init user.
+ansible_user: root
+# base role: keep key-only root login, otherwise site.yml locks itself out.
+ssh_permit_root_login: prohibit-password
+
+compose_services:
+  - seaweedfs
+
+# versions of docker images
+seaweedfs_version: "4.47"
+seaweedfs_nginx_version: 1.30.5-alpine
+seaweedfs_certbot_version: v5.8.0
+
+# TrueNAS dataset, mounted into the LXC.
+# Holds ALL SeaweedFS state (master/, volume/, filer/, letsencrypt/).
+# Thus, TrueNAS snapshot is a complete backup.
+seaweedfs_data_dir: /mnt/seaweedfs
+# Must match compose_service's compose_dest_root/<name>.
+seaweedfs_stack_dir: /opt/seaweedfs
+
+seaweedfs_data_ip: "{{ lxc_s3_1_data }}" # VLAN data: S3 (https :443 and :8333)
+seaweedfs_mgmt_ip: "{{ lxc_s3_1 }}" # VLAN mgmt: master (:9333) and filer (:8888) web UIs
+seaweedfs_data_fqdn: s3-storage.data.home.sauers.link
+seaweedfs_mgmt_fqdn: s3-storage.mgmt.home.sauers.link
+
+# Let's Encrypt ACME acme challenge mail address
+seaweedfs_acme_email: admin@simia-cogitans.net

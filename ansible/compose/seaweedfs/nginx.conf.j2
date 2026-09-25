@@ -1,0 +1,62 @@
+# TLS termination for the SeaweedFS stack (see compose.yml.j2).
+worker_processes auto;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+  ssl_certificate     /etc/letsencrypt/live/seaweedfs/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/seaweedfs/privkey.pem;
+  ssl_protocols       TLSv1.2 TLSv1.3;
+  ssl_session_cache   shared:SSL:10m;
+
+  # Resolve upstreams at request time, so recreated containers are found again.
+  resolver 127.0.0.11 valid=10s;
+
+  proxy_http_version 1.1;
+  # Pass the client's Host (incl. port) unchanged: it is part of the S3 SigV4 signature.
+  proxy_set_header Host              $http_host;
+  proxy_set_header X-Real-IP         $remote_addr;
+  proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto https;
+
+  # Objects can be arbitrarily large; stream them instead of buffering.
+  client_max_body_size    0;
+  proxy_request_buffering off;
+  proxy_buffering         off;
+
+  # S3 API (data VLAN)
+  server {
+    listen 443 ssl;
+    listen 8333 ssl;
+    server_name {{ seaweedfs_data_fqdn }};
+
+    location / {
+      set $upstream s3:8333;
+      proxy_pass http://$upstream;
+    }
+  }
+
+  # Master UI (mgmt VLAN)
+  server {
+    listen 9333 ssl;
+    server_name {{ seaweedfs_mgmt_fqdn }};
+
+    location / {
+      set $upstream master:9333;
+      proxy_pass http://$upstream;
+    }
+  }
+
+  # Filer UI (mgmt VLAN). No auth: this is the filer's full HTTP API.
+  server {
+    listen 8888 ssl;
+    server_name {{ seaweedfs_mgmt_fqdn }};
+
+    location / {
+      set $upstream filer:8888;
+      proxy_pass http://$upstream;
+    }
+  }
+}
