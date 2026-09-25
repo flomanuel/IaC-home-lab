@@ -1,0 +1,7 @@
+---
+# Name of the Secret (namespace kube-system) holding the S3 settings, see k3s_setup/4_backups/backup_config.yml.
+k8s_etcd_snapshots_s3_config_secret: k3s-etcd-snapshot-s3-config
+
+# K3s defaults: every 12 hours, keep 5 snapshots.
+k8s_etcd_snapshots_schedule_cron: "0 */12 * * *"
+k8s_etcd_snapshots_retention: 5

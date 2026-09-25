@@ -8,6 +8,7 @@
     - { role: nfs_mounts, tags: nfs }
     - { role: k8s_base, tags: k8s_node }
     - { role: k8s_etcd_disk, tags: k8s_node }
+    - { role: k8s_etcd_snapshots, tags: k8s_node }
   gather_facts: true
   serial: 1
   vars:

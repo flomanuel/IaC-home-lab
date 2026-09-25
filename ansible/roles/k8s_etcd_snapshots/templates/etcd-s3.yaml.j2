@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+etcd-s3: true
+etcd-s3-config-secret: {{ k8s_etcd_snapshots_s3_config_secret }}
+# etcd-snapshot-schedule-cron: "{{ k8s_etcd_snapshots_schedule_cron }}"
+etcd-snapshot-retention: {{ k8s_etcd_snapshots_retention }}

@@ -1,0 +1,17 @@
+---
+# https://docs.k3s.io/cli/etcd-snapshot#s3-compatible-object-store-support
+- name: Create the K3s config dir
+  ansible.builtin.file:
+    path: /etc/rancher/k3s/config.yaml.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure etcd snapshots to S3
+  ansible.builtin.template:
+    src: etcd-s3.yaml.j2
+    dest: /etc/rancher/k3s/config.yaml.d/etcd-s3.yaml
+    owner: root
+    group: root
+    mode: "0600"
