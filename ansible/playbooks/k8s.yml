@@ -6,8 +6,8 @@
   roles:
     - { role: base, tags: base }
     - { role: nfs_mounts, tags: nfs }
-    - { role: k8s_base, tags: k8s }
-    - { role: k8s_etcd_disk, tags: k8s }
+    - { role: k8s_base, tags: k8s_node }
+    - { role: k8s_etcd_disk, tags: k8s_node }
   gather_facts: true
   serial: 1
   vars:
@@ -22,7 +22,7 @@
     K3S_EXTRA_ARGS: "--tls-san {{ tls_san_vip }} --tls-san {{ tls_san_vip_dns }} --disable servicelb --disable traefik"
   tasks:
     - name: Install K3s and kube-vip
-      tags: k3s
+      tags: k3s_cluster
       block:
         # https://github.com/alexellis/k3sup#k3sup-community-edition-ce
         - name: Run k3sup (initial server)
@@ -76,7 +76,7 @@
           ansible.builtin.shell: kubectl apply -f {{ KV_MANIFEST }}
   post_tasks:
     - name: Verify the kube-vip DaemonSet manifest
-      tags: k3s
+      tags: k3s_cluster
       block:
         - name: Read the kube-vip DaemonSet manifest
           ansible.builtin.slurp:
@@ -104,7 +104,7 @@
   roles:
     - { role: base, tags: base }
     - { role: nfs_mounts, tags: nfs }
-    - { role: k8s_base, tags: k8s }
+    - { role: k8s_base, tags: k8s_node }
   gather_facts: true
   tasks:
     - name: Run k3sup (agent)
@@ -117,4 +117,4 @@
           --k3s-channel stable
       delegate_to: localhost
       become: false
-      tags: k3s
+      tags: k3s_cluster
