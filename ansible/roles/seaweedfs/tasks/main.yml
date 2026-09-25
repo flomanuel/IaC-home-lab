@@ -1,0 +1,168 @@
+---
+# SeaweedFS "weed mini" as a systemd service, behind nginx for TLS.
+# certbot (Debian package) issues the certificate via Cloudflare DNS-01 and
+# renews it with its own systemd timer.
+
+- name: Create seaweedfs system user
+  ansible.builtin.user:
+    name: "{{ seaweedfs_user }}"
+    system: true
+    shell: /usr/sbin/nologin
+    home: "{{ seaweedfs_store_dir }}"
+    create_home: false
+
+- name: Create SeaweedFS data directory
+  ansible.builtin.file:
+    path: "{{ seaweedfs_store_dir }}"
+    state: directory
+    owner: "{{ seaweedfs_user }}"
+    group: "{{ seaweedfs_user }}"
+    mode: "0750"
+
+- name: Create SeaweedFS config directory
+  ansible.builtin.file:
+    path: "{{ seaweedfs_config_dir }}"
+    state: directory
+    owner: root
+    group: "{{ seaweedfs_user }}"
+    mode: "0750"
+
+- name: Read installed weed version
+  ansible.builtin.command: /usr/local/bin/weed version
+  register: seaweedfs_installed
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Install weed {{ seaweedfs_version }}
+  when: (' ' ~ seaweedfs_version ~ ' ') not in seaweedfs_installed.stdout
+  vars:
+    seaweedfs_tarball: "/tmp/weed-{{ seaweedfs_version }}-linux_{{ seaweedfs_arch }}.tar.gz"
+  block:
+    - name: Download weed release
+      ansible.builtin.get_url:
+        url: "{{ seaweedfs_release_url }}"
+        checksum: "md5:{{ seaweedfs_release_url }}.md5"
+        dest: "{{ seaweedfs_tarball }}"
+        mode: "0644"
+
+    - name: Extract weed binary
+      ansible.builtin.unarchive:
+        src: "{{ seaweedfs_tarball }}"
+        dest: /usr/local/bin
+        remote_src: true
+        include: [weed]
+        owner: root
+        group: root
+        mode: "0755"
+      when: not ansible_check_mode
+      notify: Restart seaweedfs
+  always:
+    - name: Remove downloaded release
+      ansible.builtin.file:
+        path: "{{ seaweedfs_tarball }}"
+        state: absent
+
+- name: Template S3 credentials
+  ansible.builtin.template:
+    src: s3.json.j2
+    dest: "{{ seaweedfs_config_dir }}/s3.json"
+    owner: root
+    group: "{{ seaweedfs_user }}"
+    mode: "0640"
+  diff: false
+  notify: Restart seaweedfs
+
+- name: Template weed mini options
+  ansible.builtin.copy:
+    content: |
+      admin.password={{ seaweedfs_admin_password }}
+    dest: "{{ seaweedfs_config_dir }}/mini.options"
+    owner: root
+    group: "{{ seaweedfs_user }}"
+    mode: "0640"
+  diff: false
+  notify: Restart seaweedfs
+
+- name: Template systemd unit
+  ansible.builtin.template:
+    src: seaweedfs.service.j2
+    dest: /etc/systemd/system/seaweedfs.service
+    mode: "0644"
+  notify: Restart seaweedfs
+
+- name: Enable seaweedfs
+  ansible.builtin.systemd_service:
+    name: seaweedfs
+    state: started
+    enabled: true
+    daemon_reload: true
+
+# ---------- TLS ----------
+
+- name: Create certificate directory
+  ansible.builtin.file:
+    path: "{{ seaweedfs_data_dir }}/letsencrypt"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Link /etc/letsencrypt to the dataset
+  ansible.builtin.file:
+    src: "{{ seaweedfs_data_dir }}/letsencrypt"
+    dest: /etc/letsencrypt
+    state: link
+
+- name: Install nginx and certbot
+  ansible.builtin.apt:
+    name:
+      - nginx
+      - certbot
+      - python3-certbot-dns-cloudflare
+    state: present
+
+- name: Write Cloudflare credentials for certbot
+  ansible.builtin.copy:
+    content: "dns_cloudflare_api_token = {{ cloudflare_dns_api_token }}\n"
+    dest: /etc/letsencrypt/cloudflare.ini
+    mode: "0600"
+  diff: false
+
+# nginx needs a certificate to start; certbot.timer renews it later.
+- name: Issue initial TLS certificate
+  ansible.builtin.command:
+    cmd: >-
+      certbot certonly --non-interactive --agree-tos --email {{ seaweedfs_acme_email }}
+      --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini
+      --dns-cloudflare-propagation-seconds 30 --cert-name seaweedfs
+      -d {{ seaweedfs_data_fqdn }} -d {{ seaweedfs_mgmt_fqdn }}
+    creates: /etc/letsencrypt/live/seaweedfs/fullchain.pem
+
+- name: Create certbot deploy hook directory
+  ansible.builtin.file:
+    path: /etc/letsencrypt/renewal-hooks/deploy
+    state: directory
+    mode: "0755"
+
+- name: Reload nginx after certificate renewal
+  ansible.builtin.copy:
+    content: |
+      #!/bin/sh
+      systemctl reload nginx
+    dest: /etc/letsencrypt/renewal-hooks/deploy/reload-nginx
+    mode: "0755"
+
+- name: Template nginx config
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: "0644"
+    validate: nginx -t -c %s
+  notify: Reload nginx
+
+- name: Enable nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true

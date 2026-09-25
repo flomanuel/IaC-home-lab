@@ -1,0 +1,12 @@
+---
+# Host-specific values (version, IPs, FQDNs, data dir) live in group_vars/truenas_s3.yml.
+seaweedfs_user: seaweedfs
+seaweedfs_config_dir: /etc/seaweedfs
+# weed mini keeps master metadata, volumes and the filer store (leveldb2) here.
+seaweedfs_store_dir: "{{ seaweedfs_data_dir }}/data"
+# ansible_facts['architecture'] -> release asset suffix
+seaweedfs_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+seaweedfs_arch: "{{ seaweedfs_arch_map[ansible_facts['architecture']] }}"
+seaweedfs_release_url: "https://github.com/seaweedfs/seaweedfs/releases/download/{{ seaweedfs_version }}/linux_{{ seaweedfs_arch }}.tar.gz"

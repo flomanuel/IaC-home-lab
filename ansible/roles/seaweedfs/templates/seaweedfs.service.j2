@@ -1,0 +1,44 @@
+# Managed by Ansible (roles/seaweedfs).
+# Single-node SeaweedFS: master, volume, filer and S3 in one process.
+# nginx terminates TLS and publishes the ports per VLAN.
+[Unit]
+Description=SeaweedFS (weed mini)
+After=network-online.target local-fs.target
+Wants=network-online.target
+RequiresMountsFor={{ seaweedfs_data_dir }}
+
+[Service]
+User={{ seaweedfs_user }}
+Group={{ seaweedfs_user }}
+# WebDAV and Lance are not used.
+# The Iceberg REST catalog (S3 Table Buckets) runs on its default port 8181,
+# which is also where the admin UI looks for it.
+# s3.externalUrl is the endpoint the catalog hands to Iceberg clients.
+# mini.options holds the admin UI password, so it stays out of the unit and ps.
+ExecStart=/usr/local/bin/weed mini \
+  -dir={{ seaweedfs_store_dir }} \
+  -ip=127.0.0.1 \
+  -ip.bind=127.0.0.1 \
+  -options={{ seaweedfs_config_dir }}/mini.options \
+  -s3.config={{ seaweedfs_config_dir }}/s3.json \
+  -s3.externalUrl=https://{{ seaweedfs_data_fqdn }} \
+  -webdav=false \
+  -s3.port.lance=0 \
+  -master.telemetry=false
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=65536
+
+# The admin server's gRPC port (admin.port + 10000) ignores -ip.bind and
+# listens on all interfaces.
+# weed only ever talks to nginx and itself over loopback, so drop the rest.
+IPAddressAllow=localhost
+IPAddressDeny=any
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
