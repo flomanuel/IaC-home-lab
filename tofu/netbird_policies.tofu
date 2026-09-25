@@ -157,7 +157,7 @@ resource "netbird_policy" "admin_data" {
     enabled       = true
     protocol      = "tcp"
     ports         = ["443", "8333"]
-    name          = "Admin: PROD access"
+    name          = "Admin: DATA access"
     description   = "Access to endpoints in DATA that only admins and machine-users need to access."
     sources       = [netbird_group.admins_baseline.id]
     destination_resource = {
