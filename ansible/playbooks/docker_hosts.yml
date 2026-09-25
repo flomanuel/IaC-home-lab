@@ -1,0 +1,9 @@
+---
+- name: Docker hosts and their compose stacks
+  hosts: docker_hosts
+  become: true
+  roles:
+    - { role: base, tags: base }
+    - { role: nfs_mounts, tags: nfs }
+    - { role: docker, tags: docker }
+    - { role: compose_service, tags: compose }

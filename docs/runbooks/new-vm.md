@@ -44,8 +44,7 @@
 
    ```bash
    just ping
-   just play-limit base myapp
-   just play docker        # or: just site
+   just play docker_hosts --limit myapp   # base roles + docker + compose stacks
    ```
 
 Removal: delete `vm_myapp.tf`, run `just apply`, remove the inventory entry

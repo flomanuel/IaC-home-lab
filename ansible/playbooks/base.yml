@@ -1,6 +1,9 @@
+---
+# Baseline only, for all Linux hosts (e.g. rolling out an sshd change).
+# The host-type playbooks already include these roles.
 - name: Baseline for all Linux VMs
   hosts: linux
   become: true
   roles:
-    - base
-    - nfs_mounts
+    - { role: base, tags: base }
+    - { role: nfs_mounts, tags: nfs }

@@ -60,20 +60,20 @@ deps:
 ping:
     cd {{ ansible_dir }} && ansible linux -m ping
 
-# Run every playbook
+# Run every playbook, e.g. `just site --check --diff`
 [group('ansible')]
-site:
-    cd {{ ansible_dir }} && ansible-playbook playbooks/site.yml
+site *args:
+    cd {{ ansible_dir }} && ansible-playbook playbooks/site.yml {{ args }}
 
-# Run a single playbook, e.g. `just play docker`
+# Run a single playbook, e.g. `just play truenas_s3 --limit lxc-1 --tags seaweedfs`
 [group('ansible')]
-play pb:
-    cd {{ ansible_dir }} && ansible-playbook playbooks/{{ pb }}.yml
+play pb *args:
+    cd {{ ansible_dir }} && ansible-playbook playbooks/{{ pb }}.yml {{ args }}
 
-# Limit a playbook to one host, e.g. `just play-limit base myapp`
+# List the playbooks for `just play`
 [group('ansible')]
-play-limit pb host:
-    cd {{ ansible_dir }} && ansible-playbook playbooks/{{ pb }}.yml --limit {{ host }}
+playbooks:
+    @ls {{ ansible_dir }}/playbooks | sed 's/\.yml$//' | grep -v '^site$'
 
 # ---------- Checks ----------
 

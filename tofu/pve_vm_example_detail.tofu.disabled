@@ -3,7 +3,7 @@
 #   2. Replace "example" everywhere, pick VLAN(s) and a free IP
 #   3. just plan && just apply
 #   4. Add the VM to ansible/inventory/hosts.yml (+ host_vars if needed)
-#   5. just play-limit base <name>   (once SSH access to the VLAN exists)
+#   5. just play base --limit <name> (once SSH access to the VLAN exists)
 # Full walkthrough: docs/runbooks/new-vm.md
 
 # Cloudflare DNS records

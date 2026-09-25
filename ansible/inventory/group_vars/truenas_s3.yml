@@ -1,7 +1,7 @@
 ---
 # use "root" instead of "admin" for the cloud-init user.
 ansible_user: root
-# base role: keep key-only root login, otherwise site.yml locks itself out.
+# base role: keep key-only root login, otherwise the playbook locks itself out.
 ssh_permit_root_login: prohibit-password
 
 compose_services:

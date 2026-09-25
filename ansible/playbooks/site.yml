@@ -1,6 +1,5 @@
 ---
-- import_playbook: base.yml
-- import_playbook: docker.yml
-- import_playbook: k8s_control.yml  # 1 - keep the order
-- import_playbook: k8s_worker.yml   # 2
+# Every host-type playbook applies the base roles itself, so base.yml is not imported here.
 - import_playbook: truenas_s3.yml
+- import_playbook: docker_hosts.yml
+- import_playbook: k8s.yml
