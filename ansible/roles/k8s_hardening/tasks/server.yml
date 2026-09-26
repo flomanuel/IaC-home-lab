@@ -1,0 +1,52 @@
+---
+- name: Create K3s server dirs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+  loop:
+    - /var/lib/rancher/k3s/server
+    - /var/lib/rancher/k3s/server/logs
+    - /var/lib/rancher/k3s/server/manifests
+
+# https://docs.k3s.io/security/hardening-guide#configuration-for-kubernetes-components
+- name: Copy control plane hardening config
+  ansible.builtin.copy:
+    src: 91-hardening-server.yaml
+    dest: /etc/rancher/k3s/config.yaml.d/91-hardening-server.yaml
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart k3s
+
+# https://docs.k3s.io/security/hardening-guide#pod-security
+- name: Copy PSA file
+  ansible.builtin.copy:
+    src: psa.yaml
+    dest: /var/lib/rancher/k3s/server/psa.yaml
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart k3s
+
+# https://docs.k3s.io/security/hardening-guide#api-server-audit-configuration
+- name: Copy audit policy
+  ansible.builtin.copy:
+    src: audit.yaml
+    dest: /var/lib/rancher/k3s/server/audit.yaml
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart k3s
+
+# See https://docs.k3s.io/security/hardening-guide#networkpolicies
+# Picked up by the K3s deploy controller without a restart.
+- name: Copy network policies
+  ansible.builtin.copy:
+    src: network/
+    dest: /var/lib/rancher/k3s/server/manifests/
+    owner: root
+    group: root
+    mode: "0600"

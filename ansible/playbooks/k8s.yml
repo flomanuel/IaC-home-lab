@@ -9,6 +9,7 @@
     - { role: k8s_base, tags: k8s_node }
     - { role: k8s_etcd_disk, tags: k8s_node }
     - { role: k8s_etcd_snapshots, tags: k8s_node }
+    - { role: k8s_hardening, tags: k8s_hardening }
   gather_facts: true
   serial: 1
   vars:
@@ -106,7 +107,9 @@
     - { role: base, tags: base }
     - { role: nfs_mounts, tags: nfs }
     - { role: k8s_base, tags: k8s_node }
+    - { role: k8s_hardening, tags: k8s_hardening }
   gather_facts: true
+  serial: 1
   tasks:
     - name: Run k3sup (agent)
       ansible.builtin.shell: |

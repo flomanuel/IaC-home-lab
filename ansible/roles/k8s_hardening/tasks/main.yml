@@ -1,55 +1,14 @@
 ---
-# See https://docs.k3s.io/security/hardening-guide#ensure-protect-kernel-defaults-is-set
-- name: Enable kubelet config for hardening
-  ansible.builtin.copy:
-    src: 90-kubelet.conf
-    dest: /etc/sysctl.d/90-kubelet.conf
-    mode: "0644"
+# Runs before k3sup so that K3s starts hardened on first boot.
+# See https://docs.k3s.io/security/hardening-guide
+- name: Check whether K3s is already installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/k3s
+  register: k8s_hardening_k3s_binary
 
-- name: Copy hardening config
-  ansible.builtin.copy:
-    src: 90-hardening.yaml
-    dest: /etc/rancher/k3s/config.yaml.d/90-hardening.yaml
-    owner: root
-    group: root
-    mode: "0600"
+- name: Harden all nodes
+  ansible.builtin.include_tasks: common.yml
 
-- name: Copy PSA file
-  ansible.builtin.copy:
-    src: psa.yaml
-    dest: /var/lib/rancher/k3s/server/psa.yaml
-    owner: root
-    group: root
-    mode: "0600"
-
-- name: Copy audit policy
-  ansible.builtin.copy:
-    src: audit.yaml
-    dest: /var/lib/rancher/k3s/server/audit.yaml
-    owner: root
-    group: root
-    mode: "0600"
-
-- name: Create log dir if it does not exist
-  ansible.builtin.file:
-    path: /var/lib/rancher/k3s/server/logs
-    state: directory
-    mode: "0700"
-
-- name: Copy network policies
-  ansible.builtin.copy:
-    src: network/
-    dest: /var/lib/rancher/k3s/server/manifests/
-    owner: root
-    group: root
-    mode: "0600"
-
-# ------ last tasks ------
-
-- name: Restart systemctl daemon
-  become: true
-  ansible.builtin.command: "systemctl daemon-reload"
-
-- name: Restart K3s
-  become: true
-  ansible.builtin.command: "systemctl restart k3s.service"
+- name: Harden control plane nodes
+  ansible.builtin.include_tasks: server.yml
+  when: inventory_hostname in groups['k8s_control']
