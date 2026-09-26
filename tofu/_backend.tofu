@@ -1,3 +1,4 @@
+# Put credentials in ~/.aws/credentials
 terraform {
   backend "s3" {
     bucket                      = "opentofu-state"
