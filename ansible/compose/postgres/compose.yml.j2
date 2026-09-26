@@ -1,0 +1,57 @@
+# PostgreSQL + pgAdmin. https://hub.docker.com/_/postgres
+# - PostgreSQL listens on the DATA address only, pgAdmin on the MGMT address only.
+# - Other stacks on this host reach the DB as postgres:5432 by joining the
+#   shared network:  networks: { postgres: { external: true } }
+# - Data dirs, secret files and servers.json are created by prepare.yml.
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    # Default /dev/shm (64 MB) is too small for parallel queries.
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    volumes:
+      # 18+: mount the parent dir; PGDATA is /var/lib/postgresql/18/docker.
+      - ./pgdata:/var/lib/postgresql
+    ports:
+      - "{{ data_ip }}:5432:5432"
+    networks:
+      - postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:9
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "{{ pgadmin_email }}"
+      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/pgadmin_password
+    secrets:
+      - pgadmin_password
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+      # Imported on first start only (when pgAdmin's own DB is created).
+      - ./servers.json:/pgadmin4/servers.json:ro
+    ports:
+      - "{{ mgmt_ip }}:5050:80"
+    networks:
+      - postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  postgres:
+    name: postgres
+
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password
+  pgadmin_password:
+    file: ./secrets/pgadmin_password

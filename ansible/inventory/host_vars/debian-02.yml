@@ -1,3 +1,5 @@
-# secrets, DBs, docker compose
-compose_services:
-  - whoami
+# applications, docker compose
+data_ip: "{{ debian02_data_ip }}"
+mgmt_ip: "{{ debian02_mgmt_ip }}"
+# compose_services:
+#   - whoami

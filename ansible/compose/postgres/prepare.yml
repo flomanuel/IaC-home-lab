@@ -1,0 +1,42 @@
+---
+# Included by roles/compose_service before `docker compose up`.
+- name: Postgres create data directories
+  ansible.builtin.file:
+    path: "{{ compose_dest_root }}/postgres/{{ item.path }}"
+    state: directory
+    owner: "{{ item.uid }}"
+    group: "{{ item.uid }}"
+    mode: "0700"
+  loop:
+    - { path: pgdata, uid: 70 } # postgres user in the alpine image
+    - { path: pgadmin, uid: 5050 } # pgadmin user in the pgadmin4 image
+
+- name: Postgres create secrets directory
+  ansible.builtin.file:
+    path: "{{ compose_dest_root }}/postgres/secrets"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+# Bind-mounted into the containers as /run/secrets/<name>. The postgres
+# entrypoint reads its file as root; pgAdmin runs as 5050 and needs ownership.
+- name: Postgres write secret files
+  ansible.builtin.copy:
+    content: "{{ item.value }}"
+    dest: "{{ compose_dest_root }}/postgres/secrets/{{ item.name }}"
+    owner: "{{ item.uid }}"
+    group: "{{ item.uid }}"
+    mode: "0400"
+  loop:
+    - { name: postgres_password, value: "{{ postgres_password }}", uid: 0 }
+    - { name: pgadmin_password, value: "{{ pgadmin_password }}", uid: 5050 }
+  loop_control:
+    label: "{{ item.name }}"
+  no_log: true
+
+- name: Postgres template pgAdmin server list
+  ansible.builtin.template:
+    src: "{{ compose_src_dir }}/postgres/servers.json.j2"
+    dest: "{{ compose_dest_root }}/postgres/servers.json"
+    mode: "0644"

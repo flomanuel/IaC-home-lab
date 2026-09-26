@@ -32,9 +32,9 @@ module "debian-01" {
   source = "./modules/vm"
   common = local.common
 
-  name  = "debian-01"
-  image = "debian"
-  snippet = "qemu_guest_agent_debian"
+  name          = "debian-01"
+  image         = "debian"
+  snippet       = "qemu_guest_agent_debian"
   agent_enabled = true
 
   networks = [
@@ -47,10 +47,22 @@ module "debian-01" {
   memory  = 8192 # MiB
   disk_gb = 40
 
-  tags  = ["docker-compose","applications"]
+  tags = ["docker-compose", "db", "secrets"]
 
   global_security_groups = ["ssh", "http", "https"]
 
+  # net0 = prod, net1 = data, net2 = mgmt (order of `networks`)
+  custom_firewall_rules = {
+    postgres = [
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "5432", comment = "PostgreSQL", iface = "net1" },
+    ]
+    pgadmin = [
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "5050", comment = "pgAdmin", iface = "net2" },
+    ]
+    # redis = [
+    #   { type = "in", action = "ACCEPT", proto = "tcp", dport = "6379", comment = "Redis", iface = "net1" },
+    # ]
+  }
 }
 
 output "debian-01" {

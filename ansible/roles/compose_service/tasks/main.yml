@@ -9,6 +9,15 @@
     mode: "0755"
   loop: "{{ compose_services }}"
 
+# Optional ansible/compose/<name>/prepare.yml for stack-specific setup
+# (data directories, secret files, extra config), run before `compose up`.
+- name: Run stack preparation tasks
+  ansible.builtin.include_tasks: "{{ compose_src_dir }}/{{ compose_service }}/prepare.yml"
+  loop: "{{ compose_services }}"
+  loop_control:
+    loop_var: compose_service
+  when: (compose_src_dir ~ '/' ~ compose_service ~ '/prepare.yml') is file
+
 - name: Template compose files
   ansible.builtin.template:
     src: "{{ compose_src_dir }}/{{ item }}/compose.yml.j2"

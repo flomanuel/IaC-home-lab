@@ -38,7 +38,5 @@ just play <playbook>   single playbook
 
 ## Roadmap
 
-- OpenTofu-State to MinIO (e.g. on TrueNAS): swap `tofu/backend.tf`, `tofu init -migrate-state`.
 - Secrets to self-hosted [Infisical](https://infisical.com): replaces `.env`
 and `secrets.yml` (Infisical tofu provider + Ansible lookup exist).
-

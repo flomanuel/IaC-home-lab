@@ -1,4 +1,6 @@
-# applications, docker compose
+# DBs, secrets, docker compose
+data_ip: "{{ debian01_data_ip }}"
+mgmt_ip: "{{ debian01_mgmt_ip }}"
 nfs_mounts:
   - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/audio"
     path: /mnt/audio
@@ -9,4 +11,4 @@ nfs_mounts:
   - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/video"
     path: /mnt/video
 compose_services:
-  - whoami
+  - postgres # postgres first: it creates the shared "postgres" network other stacks join.
