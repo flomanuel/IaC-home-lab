@@ -18,9 +18,29 @@ resource "cloudflare_dns_record" "debian-01_dot_data_dot_home" {
   comment = "tofu;home-lab;proxmox"
 }
 
+resource "cloudflare_dns_record" "wildcard_dot_debian-01_dot_data_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "*.debian-01.data.home"
+  content = "10.30.0.11"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;proxmox"
+}
+
 resource "cloudflare_dns_record" "debian-01_dot_mgmt_dot_home" {
   zone_id = var.zone_id_1
   name    = "debian-01.mgmt.home"
+  content = "10.20.0.11"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;proxmox"
+}
+
+resource "cloudflare_dns_record" "wildcard_dot_debian-01_dot_mgmt_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "*.debian-01.mgmt.home"
   content = "10.20.0.11"
   type    = "A"
   ttl     = 1

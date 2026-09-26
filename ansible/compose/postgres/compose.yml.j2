@@ -20,13 +20,15 @@ services:
     labels:
       # Run sql dump before backup jobs collects it.
       # Write tmp -> failed dump never overrides a good one
-      docker-volume-backup.archive-pre: >-
-        /bin/sh -c 'pg_dumpall -U postgres > /dump/pg_dumpall.sql.tmp
-        && mv /dump/pg_dumpall.sql.tmp /dump/pg_dumpall.sql'
-    ports:
-      - "{{ data_ip }}:5432:5432"
+      - docker-volume-backup.archive-pre=/bin/sh -c 'pg_dumpall -U postgres > /dump/pg_dumpall.sql.tmp && mv /dump/pg_dumpall.sql.tmp /dump/pg_dumpall.sql'
+      - traefik.enable=true
+      - traefik.http.routers.postgres.rule=Host(`postgres.debian-01.data.home.sauers.link`)
+      - traefik.http.routers.postgres.tls=true
+      - traefik.http.routers.postgres.tls.certresolver=cloudflare
+      - traefik.http.routers.postgres.entrypoints=postgres
     networks:
       - postgres
+      - frontend
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -45,10 +47,15 @@ services:
       - ./pgadmin:/var/lib/pgadmin
       # Imported on first start only (when pgAdmin's own DB is created).
       - ./servers.json:/pgadmin4/servers.json:ro
-    ports:
-      - "{{ mgmt_ip }}:5050:80"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pgadmin.rule=Host(`postgres.debian-01.mgmt.home.sauers.link`)
+      - traefik.http.routers.pgadmin.tls=true
+      - traefik.http.routers.pgadmin.tls.certresolver=cloudflare
+      - traefik.http.routers.pgadmin.entrypoints=websecure
     networks:
       - postgres
+      - frontend
     depends_on:
       postgres:
         condition: service_healthy
@@ -56,6 +63,8 @@ services:
 networks:
   postgres:
     name: postgres
+  frontend:
+    external: true
 
 secrets:
   postgres_password:

@@ -12,3 +12,4 @@ nfs_mounts:
     path: /mnt/video
 compose_services: # do not forget to add to backup_sources
   - postgres # postgres first: it creates the shared "postgres" network other stacks join.
+  - traefik

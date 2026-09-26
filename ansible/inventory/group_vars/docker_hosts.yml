@@ -18,4 +18,5 @@ backup_retention_days: 7
 # Only stacks a host actually runs are mounted.
 backup_sources:
   postgres: [backup] # pg_dumpall
+  traefik: [data] # certs
   # someapp: [data]  # plain volume backup; add `docker-volume-backup.stop-during-backup=true` to the compose file
