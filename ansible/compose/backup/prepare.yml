@@ -1,0 +1,29 @@
+---
+# Included by roles/compose_service before `docker compose up`.
+- name: Backup create secrets directory
+  ansible.builtin.file:
+    path: "{{ compose_dest_root }}/backup/secrets"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+# Bind-mounted into the container as /run/secrets/<name>, read via the
+# offen *_FILE variables. The container runs as root.
+- name: Backup write secret files
+  ansible.builtin.copy:
+    content: "{{ item.value }}"
+    dest: "{{ compose_dest_root }}/backup/secrets/{{ item.name }}"
+    owner: root
+    group: root
+    mode: "0400"
+  loop:
+    - { name: s3_access_key, value: "{{ backup_s3_access_key }}" }
+    - { name: s3_secret_key, value: "{{ backup_s3_secret_key }}" }
+    - { name: gpg_passphrase, value: "{{ backup_gpg_passphrase }}" }
+    - { name: notification_urls, value: "{{ backup_notification_urls }}" }
+  loop_control:
+    label: "{{ item.name }}"
+  # notification_urls is optional; the compose template skips it when empty.
+  when: item.value | length > 0
+  no_log: true

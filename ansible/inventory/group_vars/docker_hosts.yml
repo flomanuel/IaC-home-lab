@@ -1,7 +1,21 @@
 ---
 # Compose stacks to deploy on every docker host; usually overridden per host
 # in host_vars/<name>.yml. Each entry needs ansible/compose/<name>/compose.yml.j2.
-compose_services: []
+compose_services: [] # do not forget to add to backup_sources
+
+# Deployed on every docker host on top of compose_services.
+compose_services_always:
+  - backup
 
 # Add admin_user to the docker group (docker CLI without sudo).
 docker_admin_in_group: true
+
+# Backups (see compose/backup). Each host runs its own instance and uploads to s3-compatible storage
+backup_cron: "0 3 * * *"
+backup_retention_days: 7
+
+# Per stack: dirs relative to /opt/<stack> that the backup instance archives.
+# Only stacks a host actually runs are mounted.
+backup_sources:
+  postgres: [backup] # pg_dumpall
+  # someapp: [data]  # plain volume backup; add `docker-volume-backup.stop-during-backup=true` to the compose file

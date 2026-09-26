@@ -10,6 +10,7 @@
   loop:
     - { path: pgdata, uid: 70 } # postgres user in the alpine image
     - { path: pgadmin, uid: 5050 } # pgadmin user in the pgadmin4 image
+    - { path: backup, uid: 0 } # pg_dumpall output
 
 - name: Postgres create secrets directory
   ansible.builtin.file:

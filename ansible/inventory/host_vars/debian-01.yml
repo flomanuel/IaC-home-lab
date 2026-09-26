@@ -10,5 +10,5 @@ nfs_mounts:
     path: /mnt/images
   - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/video"
     path: /mnt/video
-compose_services:
+compose_services: # do not forget to add to backup_sources
   - postgres # postgres first: it creates the shared "postgres" network other stacks join.

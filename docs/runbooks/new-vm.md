@@ -34,7 +34,7 @@
    nfs_mounts:
      - src: "{{ truenas_data_ip }}:/mnt/tank/media"
        path: /mnt/media
-   compose_services:
+   compose_services: # do not forget to add to backup_sources
      - whoami
    ```
 

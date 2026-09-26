@@ -1,0 +1,59 @@
+# Backups via offen/docker-volume-backup. https://offen.github.io/docker-volume-backup/
+# - Deployed on every docker host (compose_services_always)
+{% set mounts = [] %}
+{% for stack in compose_stacks if stack in backup_sources %}
+{% for dir in backup_sources[stack] %}
+{% set _ = mounts.append(compose_dest_root ~ '/' ~ stack ~ '/' ~ dir ~ ':/backup/' ~ stack ~ '/' ~ dir ~ ':ro') %}
+{% endfor %}
+{% endfor %}
+services:
+  backup:
+    image: offen/docker-volume-backup:v2
+    restart: unless-stopped
+    environment:
+      BACKUP_CRON_EXPRESSION: "{{ backup_cron }}"
+      BACKUP_RETENTION_DAYS: "{{ backup_retention_days }}"
+      # Rotation only touches files matching the static part of BACKUP_FILENAME.
+      BACKUP_PRUNING_PREFIX: backup-
+      AWS_ENDPOINT: "{{ backup_s3_endpoint }}"
+      AWS_S3_BUCKET_NAME: "{{ backup_s3_bucket }}"
+      AWS_S3_PATH: "{{ inventory_hostname }}"
+      AWS_ACCESS_KEY_ID_FILE: /run/secrets/s3_access_key
+      AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/s3_secret_key
+      GPG_PASSPHRASE_FILE: /run/secrets/gpg_passphrase
+{% if backup_notification_urls %}
+      NOTIFICATION_URLS_FILE: /run/secrets/notification_urls
+      NOTIFICATION_LEVEL: error
+{% endif %}
+    secrets:
+      - s3_access_key
+      - s3_secret_key
+      - gpg_passphrase
+{% if backup_notification_urls %}
+      - notification_urls
+{% endif %}
+    volumes:
+      # Runs the archive-pre/-post label commands and stops labeled containers.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # The cron expression is evaluated in host local time.
+      - /etc/localtime:/etc/localtime:ro
+{% for mount in mounts %}
+      - {{ mount }}
+{% endfor %}
+{% if not mounts %}
+    # Nothing to back up on this host yet; offen fails if /backup is missing.
+    tmpfs:
+      - /backup
+{% endif %}
+
+secrets:
+  s3_access_key:
+    file: ./secrets/s3_access_key
+  s3_secret_key:
+    file: ./secrets/s3_secret_key
+  gpg_passphrase:
+    file: ./secrets/gpg_passphrase
+{% if backup_notification_urls %}
+  notification_urls:
+    file: ./secrets/notification_urls
+{% endif %}

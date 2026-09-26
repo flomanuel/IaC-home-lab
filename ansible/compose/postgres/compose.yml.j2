@@ -14,8 +14,15 @@ services:
     secrets:
       - postgres_password
     volumes:
-      # 18+: mount the parent dir; PGDATA is /var/lib/postgresql/18/docker.
       - ./pgdata:/var/lib/postgresql
+      # Dump target (backup job reads dump-file from host folder "backup")
+      - ./backup:/dump
+    labels:
+      # Run sql dump before backup jobs collects it.
+      # Write tmp -> failed dump never overrides a good one
+      docker-volume-backup.archive-pre: >-
+        /bin/sh -c 'pg_dumpall -U postgres > /dump/pg_dumpall.sql.tmp
+        && mv /dump/pg_dumpall.sql.tmp /dump/pg_dumpall.sql'
     ports:
       - "{{ data_ip }}:5432:5432"
     networks:

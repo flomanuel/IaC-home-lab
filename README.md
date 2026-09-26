@@ -20,6 +20,7 @@ ansible/
   playbooks/           site, base, docker, k3s
   roles/               base, nfs_mounts, docker, compose_service, k3s_*, _template_service
   compose/<name>/      compose stack templates, deployed via compose_services var
+  compose/backup/      offen/docker-volume-backup on every docker host (backup_sources)
 docs/runbooks/         step-by-step guides (new VM, API token, vmbr1, Windows template)
 justfile               front door: just --list
 ```

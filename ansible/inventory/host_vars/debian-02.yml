@@ -1,5 +1,5 @@
 # applications, docker compose
 data_ip: "{{ debian02_data_ip }}"
 mgmt_ip: "{{ debian02_mgmt_ip }}"
-# compose_services:
+# compose_services: # do not forget to add to backup_sources
 #   - whoami
