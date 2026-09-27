@@ -97,3 +97,15 @@ resource "cloudflare_dns_record" "wildcard_dot_k8s-prod-1_dot_home" {
   proxied = false
   comment = "tofu;home-lab;K8s;traefik"
 }
+
+# ====== Aliases ======
+
+resource "cloudflare_dns_record" "auth_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "auth.home"
+  content = "authentik.debian-02.prod.home.sauers.link"
+  type    = "CNAME"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;authentik"
+}

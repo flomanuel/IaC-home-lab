@@ -48,6 +48,16 @@ resource "cloudflare_dns_record" "wildcard_dot_debian-01_dot_mgmt_dot_home" {
   comment = "tofu;home-lab;proxmox"
 }
 
+resource "cloudflare_dns_record" "wildcard_dot_debian-01_dot_prod_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "*.debian-01.prod.home"
+  content = "10.50.0.11"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;proxmox"
+}
+
 module "debian-01" {
   source = "./modules/vm"
   common = local.common
