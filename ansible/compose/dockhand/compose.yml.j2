@@ -1,0 +1,36 @@
+# UI: https://dockhand.{{ inventory_hostname }}.mgmt.home.sauers.link via traefik,
+#   - http://{{ mgmt_ip }}:3000 if traefik is down.
+# Management of remote hosts: hawser agent
+services:
+  dockhand:
+    image: fnsys/dockhand:{{ dockhand_version }}
+    restart: unless-stopped
+    environment:
+      DATA_DIR: {{ compose_dest_root }}/dockhand/data
+      PUID: "{{ dockhand_puid }}"
+      PGID: "{{ dockhand_puid }}"
+    env_file:
+      - ./secrets/dockhand.env # ENCRYPTION_KEY
+    group_add:
+      - "{{ ansible_facts['getent_group']['docker'][1] }}"
+    ports:
+      - "{{ mgmt_ip }}:3000:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - {{ compose_dest_root }}/dockhand/data:{{ compose_dest_root }}/dockhand/data
+    labels:
+      - dockhand.update=false
+      # Consistent SQLite copy for the backup stack.
+      - docker-volume-backup.stop-during-backup=true
+      - traefik.enable=true
+      - traefik.http.routers.dockhand.rule=Host(`dockhand.{{ inventory_hostname }}.mgmt.home.sauers.link`)
+      - traefik.http.routers.dockhand.tls=true
+      - traefik.http.routers.dockhand.tls.certresolver=cloudflare
+      - traefik.http.routers.dockhand.entrypoints=mgmt
+      - traefik.http.services.dockhand.loadbalancer.server.port=3000
+    networks:
+      - frontend
+
+networks:
+  frontend:
+    external: true

@@ -74,10 +74,11 @@ module "debian-01" {
   # net0 = prod, net1 = data, net2 = mgmt (order of `networks`)
   custom_firewall_rules = {
     postgres = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "5432", comment = "PostgreSQL", iface = "net1" },
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "5432", comment = "PostgreSQL (traefik, TLS)", iface = "net1" },
     ]
-    pgadmin = [
-      { type = "in", action = "ACCEPT", proto = "tcp", dport = "5050", comment = "pgAdmin", iface = "net2" },
+    # pgAdmin and the Dockhand UI are served by traefik on the MGMT address (https group).
+    dockhand = [
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "3000", source = local.admin_ips, comment = "Dockhand break-glass (no traefik)", iface = "net2" },
     ]
     # redis = [
     #   { type = "in", action = "ACCEPT", proto = "tcp", dport = "6379", comment = "Redis", iface = "net1" },

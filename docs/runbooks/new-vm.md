@@ -34,17 +34,19 @@
    nfs_mounts:
      - src: "{{ truenas_data_ip }}:/mnt/tank/media"
        path: /mnt/media
-   compose_services: # do not forget to add to backup_sources
-     - whoami
+   mgmt_ip: 10.20.1.10
+   compose_services: # docker hosts: management plane only
+     - hawser
    ```
 
-   Each compose stack needs `ansible/compose/<name>/compose.yml.j2`.
+   Compose stacks are deployed by Dockhand, not Ansible: see
+   [dockhand.md](dockhand.md#35-new-docker-host).
 
 5. **Configure it** (requires SSH access to the VM's VLAN):
 
    ```bash
    just ping
-   just play docker_hosts --limit myapp   # base roles + docker + compose stacks
+   just play docker_hosts --limit myapp   # base roles + docker + hawser agent
    ```
 
 Removal: delete `vm_myapp.tf`, run `just apply`, remove the inventory entry

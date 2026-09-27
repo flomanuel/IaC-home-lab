@@ -1,22 +1,20 @@
 ---
-# Compose stacks to deploy on every docker host; usually overridden per host
-# in host_vars/<name>.yml. Each entry needs ansible/compose/<name>/compose.yml.j2.
-compose_services: [] # do not forget to add to backup_sources
+# Application stacks are deployed by Dockhand from stacks/ in the repo root, NOT by Ansible.
+# Ansible only bootstraps the management plane (ansible/compose/<name>/compose.yml.j2):
+# dockhand on debian-01, a hawser agent on every other docker host. Set per host in host_vars.
+compose_services: []
 
-# Deployed on every docker host on top of compose_services.
-compose_services_always:
-  - backup
+# Shared docker networks, created before any stack runs. Stacks join them as
+# `external: true`, so stacks do not depend on each other's deploy order.
+docker_networks:
+  - frontend # traefik
 
 # Add admin_user to the docker group (docker CLI without sudo).
 docker_admin_in_group: true
 
-# Backups (see compose/backup). Each host runs its own instance and uploads to s3-compatible storage
-backup_cron: "0 3 * * *"
-backup_retention_days: 7
+# Management plane versions. Bump here, then `just play docker_hosts --tags compose`.
+dockhand_version: v1.0.49 # https://hub.docker.com/r/fnsys/dockhand/tags
+hawser_version: "0.2.50" # https://github.com/Finsys/hawser/releases
 
-# Per stack: dirs relative to /opt/<stack> that the backup instance archives.
-# Only stacks a host actually runs are mounted.
-backup_sources:
-  postgres: [backup] # pg_dumpall
-  traefik: [data] # certs
-  # someapp: [data]  # plain volume backup; add `docker-volume-backup.stop-during-backup=true` to the compose file
+# Dockhand drops to this uid/gid (Owner of /opt/dockhand/data)
+dockhand_puid: 1000

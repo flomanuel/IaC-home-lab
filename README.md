@@ -19,9 +19,10 @@ ansible/
   inventory/hosts.yml  static inventory (groups: docker_hosts, svc_hosts, k3s_*)
   playbooks/           site, base, docker, k3s
   roles/               base, nfs_mounts, docker, compose_service, k3s_*, _template_service
-  compose/<name>/      compose stack templates, deployed via compose_services var
-  compose/backup/      offen/docker-volume-backup on every docker host (backup_sources)
-docs/runbooks/         step-by-step guides (new VM, API token, vmbr1, Windows template)
+  compose/<name>/      management plane only: dockhand (debian-01), hawser agent (other docker hosts)
+stacks/<name>/         compose stacks, deployed by Dockhand as git stacks (docs/runbooks/dockhand.md)
+stacks/backup/<host>/  offen/docker-volume-backup, one stack per docker host
+docs/runbooks/         step-by-step guides (new VM, Dockhand, API token, vmbr1, Windows template)
 justfile               front door: just --list
 ```
 

@@ -1,0 +1,35 @@
+---
+# Included by roles/compose_service before `docker compose up`.
+# DATA_DIR uses matching host/container paths, so relative bind mounts of git and
+# UI stacks resolve on the host (see Dockhand manual, "Data storage & volume paths").
+- name: Dockhand create data directory
+  ansible.builtin.file:
+    path: "{{ compose_dest_root }}/dockhand/data"
+    state: directory
+    owner: "{{ dockhand_puid }}"
+    group: "{{ dockhand_puid }}"
+    mode: "0700"
+
+- name: Dockhand create secrets directory
+  ansible.builtin.file:
+    path: "{{ compose_dest_root }}/dockhand/secrets"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+# a restored data dir (DB with encrypted stack secrets) is only readable with this key.
+- name: Dockhand write encryption key
+  ansible.builtin.copy:
+    content: "ENCRYPTION_KEY={{ dockhand_encryption_key }}\n"
+    dest: "{{ compose_dest_root }}/dockhand/secrets/dockhand.env"
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+
+# Dockhand needs the host's docker group for the socket.
+- name: Dockhand look up docker group id
+  ansible.builtin.getent:
+    database: group
+    key: docker

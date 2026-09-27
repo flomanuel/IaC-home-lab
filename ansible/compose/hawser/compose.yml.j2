@@ -1,0 +1,20 @@
+services:
+  hawser:
+    image: ghcr.io/finsys/hawser:{{ hawser_version }}
+    restart: unless-stopped
+    environment:
+      AGENT_NAME: "{{ inventory_hostname }}"
+      STACKS_DIR: {{ compose_dest_root }}/hawser/stacks
+      TLS_CERT: /certs/server.crt
+      TLS_KEY: /certs/server.key
+    env_file:
+      - ./secrets/hawser.env # TOKEN
+    ports:
+      - "{{ mgmt_ip }}:2376:2376"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - {{ compose_dest_root }}/hawser/stacks:{{ compose_dest_root }}/hawser/stacks
+      - ./tls/server.crt:/certs/server.crt:ro
+      - ./tls/server.key:/certs/server.key:ro
+    labels:
+      - dockhand.update=false

@@ -51,6 +51,13 @@ module "debian-02" {
   tags = ["docker-compose", "applications"]
 
   global_security_groups = ["ssh", "http", "https"]
+
+  # net0 = prod, net1 = data, net2 = mgmt (order of `networks`)
+  custom_firewall_rules = {
+    hawser = [
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "2376", source = "10.20.0.11", comment = "Hawser agent (Dockhand on debian-01)", iface = "net2" },
+    ]
+  }
 }
 
 output "debian-02" {

@@ -1,0 +1,78 @@
+---
+# Included by roles/compose_service before `docker compose up`.
+- name: Hawser create directories
+  ansible.builtin.file:
+    path: "{{ compose_dest_root }}/hawser/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+  loop:
+    - secrets
+    - tls
+    - stacks # stack files dockhand sends
+
+- name: Hawser write agent token
+  ansible.builtin.copy:
+    content: "TOKEN={{ hawser_token }}\n"
+    dest: "{{ compose_dest_root }}/hawser/secrets/hawser.env"
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+
+# Self-signed CA per host. Paste tls/ca.crt into Dockhand.
+# Existing certs are kept, so the CA only changes on a rebuilt host.
+- name: Hawser install TLS prerequisites
+  ansible.builtin.apt:
+    name: python3-cryptography
+    state: present
+
+- name: Hawser CA private key
+  community.crypto.openssl_privatekey:
+    path: "{{ compose_dest_root }}/hawser/tls/ca.key"
+    mode: "0600"
+
+- name: Hawser CA signing request
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ compose_dest_root }}/hawser/tls/ca.key"
+    common_name: "hawser CA {{ inventory_hostname }}"
+    basic_constraints: ["CA:TRUE"]
+    basic_constraints_critical: true
+    key_usage: [keyCertSign, cRLSign]
+    key_usage_critical: true
+  register: hawser_ca_csr
+  changed_when: false
+
+- name: Hawser CA certificate
+  community.crypto.x509_certificate:
+    path: "{{ compose_dest_root }}/hawser/tls/ca.crt"
+    csr_content: "{{ hawser_ca_csr.csr }}"
+    privatekey_path: "{{ compose_dest_root }}/hawser/tls/ca.key"
+    provider: selfsigned
+    mode: "0644"
+
+- name: Hawser server private key
+  community.crypto.openssl_privatekey:
+    path: "{{ compose_dest_root }}/hawser/tls/server.key"
+    mode: "0600"
+
+- name: Hawser server signing request
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ compose_dest_root }}/hawser/tls/server.key"
+    common_name: "{{ inventory_hostname }}.mgmt.home.sauers.link"
+    subject_alt_name:
+      - "IP:{{ mgmt_ip }}"
+      - "DNS:{{ inventory_hostname }}.mgmt.home.sauers.link"
+    extended_key_usage: [serverAuth]
+  register: hawser_server_csr
+  changed_when: false
+
+- name: Hawser server certificate
+  community.crypto.x509_certificate:
+    path: "{{ compose_dest_root }}/hawser/tls/server.crt"
+    csr_content: "{{ hawser_server_csr.csr }}"
+    provider: ownca
+    ownca_path: "{{ compose_dest_root }}/hawser/tls/ca.crt"
+    ownca_privatekey_path: "{{ compose_dest_root }}/hawser/tls/ca.key"
+    mode: "0644"
