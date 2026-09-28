@@ -37,7 +37,8 @@ module "k8s-control-1" {
   memory  = 8192
   disk_gb = 60
 
-  # Dedicated SSD disk for etcd, mounted by the Ansible role k8s_etcd_disk.
+  # Dedicated SSD disk for etcd, mounted by the Ansible role data_disks
+  # (serial must match `data_disks` in ansible/inventory/group_vars/k8s_control.yml).
   data_disks = [
     { datastore_id = var.storage_fast_disks, size = 8, serial = "k3s-etcd" },
   ]

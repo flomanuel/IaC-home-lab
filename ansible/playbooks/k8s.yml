@@ -3,11 +3,19 @@
 - name: Setup for Kubernetes Control Nodes
   hosts: k8s_control
   become: true
+  pre_tasks:
+    # data_disks is a no-op for an empty list; without this, K3s would silently put etcd on the OS disk.
+    - name: Fail unless the etcd data disk is configured
+      tags: always
+      ansible.builtin.assert:
+        that: data_disks | selectattr('mount_path', 'equalto', '/var/lib/rancher/k3s/server/db') | list | length == 1
+        fail_msg: "No data_disks entry for /var/lib/rancher/k3s/server/db. Is the host in k8s_control (group_vars/k8s_control.yml)?"
+        quiet: true
   roles:
     - { role: base, tags: base }
     - { role: nfs_mounts, tags: nfs }
     - { role: k8s_base, tags: k8s_node }
-    - { role: k8s_etcd_disk, tags: k8s_node }
+    - { role: data_disks, tags: k8s_node }
     - { role: k8s_etcd_snapshots, tags: k8s_node }
     - { role: k8s_hardening, tags: k8s_hardening }
   gather_facts: true

@@ -1,0 +1,9 @@
+---
+# Dedicated SSD for the K3s etcd datastore (role data_disks). Serial must match the tofu
+# `data_disks` of the server VMs. playbooks/k8s.yml asserts this entry exists.
+# K3s keeps etcd in <mount>/etcd and, by default, its snapshots in <mount>/snapshots.
+# Mounted one level above etcd/ because K3s may rename that directory (etcd-old-<ts>).
+data_disks:
+  - serial: k3s-etcd
+    mount_path: /var/lib/rancher/k3s/server/db
+    mode: "0700"

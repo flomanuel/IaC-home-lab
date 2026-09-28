@@ -1,0 +1,50 @@
+---
+# One entry of `data_disks`, passed in as `data_disk`.
+# The serial doubles as the ext4 label, which is limited to 16 characters (tofu allows 20).
+- name: "Fail unless the serial is a valid ext4 label ({{ data_disk.serial }})"
+  ansible.builtin.assert:
+    that: data_disk.serial | length <= 16
+    fail_msg: "Data disk serial '{{ data_disk.serial }}' is longer than 16 characters, the ext4 label limit."
+    quiet: true
+
+# Looked up by serial, as udev's /dev/disk/by-id link uses the Proxmox drive name (drive-scsiN), not the serial.
+- name: "Find the data disk by its serial ({{ data_disk.serial }})"
+  ansible.builtin.shell: lsblk -dnpo NAME,SERIAL | awk '$2 == "{{ data_disk.serial }}" { print $1 }'
+  register: data_disks_device
+  changed_when: false
+  check_mode: false
+
+- name: "Fail unless exactly one data disk is found ({{ data_disk.serial }})"
+  ansible.builtin.assert:
+    that: data_disks_device.stdout_lines | length == 1
+    fail_msg: "Expected one disk with serial '{{ data_disk.serial }}', found {{ data_disks_device.stdout_lines }}. Is the data disk attached in tofu?"
+    quiet: true
+
+# Whole disk, no partition table. Never reformats a disk that already has a filesystem.
+- name: "Create filesystem on the data disk ({{ data_disk.serial }})"
+  community.general.filesystem:
+    dev: "{{ data_disks_device.stdout }}"
+    fstype: "{{ data_disks_fstype }}"
+    opts: "-m 0 -L {{ data_disk.serial }}"
+
+- name: "Read the filesystem UUID ({{ data_disk.serial }})"
+  ansible.builtin.command: "blkid -s UUID -o value {{ data_disks_device.stdout }}"
+  register: data_disks_uuid
+  changed_when: false
+
+- name: "Mount the data disk ({{ data_disk.serial }})"
+  ansible.posix.mount:
+    src: "UUID={{ data_disks_uuid.stdout }}"
+    path: "{{ data_disk.mount_path }}"
+    fstype: "{{ data_disks_fstype }}"
+    opts: "{{ data_disks_mount_opts }}"
+    state: mounted
+
+# Applies to the root of the mounted filesystem, not the underlying directory.
+- name: "Set permissions on the mounted data disk ({{ data_disk.serial }})"
+  ansible.builtin.file:
+    path: "{{ data_disk.mount_path }}"
+    state: directory
+    owner: "{{ data_disk.owner | default('root') }}"
+    group: "{{ data_disk.group | default('root') }}"
+    mode: "{{ data_disk.mode | default('0755') }}"

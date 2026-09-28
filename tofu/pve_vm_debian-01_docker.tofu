@@ -77,6 +77,12 @@ module "debian-01" {
   memory  = 8192 # MiB
   disk_gb = 40
 
+  # Dedicated SSD disk for postgres, mounted by the Ansible role data_disks
+  # (serial must match `data_disks` in ansible/inventory/host_vars/debian-01.yml).
+  data_disks = [
+    { datastore_id = var.storage_fast_disks, size = 10, serial = "postgres-data" },
+  ]
+
   tags = ["docker-compose", "db", "secrets"]
 
   global_security_groups = ["ssh", "http", "https"]

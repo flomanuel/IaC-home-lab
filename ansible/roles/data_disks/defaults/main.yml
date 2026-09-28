@@ -1,0 +1,11 @@
+---
+# Dedicated disks from the tofu `data_disks` of a VM, matched by serial. Set per host/group.
+# Per entry:
+#   serial:     required, must match the tofu `serial` (max 16 chars, it is also the ext4 label)
+#   mount_path: required
+#   owner, group: optional, default root; applied to the root of the mounted filesystem
+#   mode:       optional, default "0755"
+# e.g. [{ serial: k3s-etcd, mount_path: /var/lib/rancher/k3s/server/db, mode: "0700" }]
+data_disks: []
+data_disks_fstype: ext4
+data_disks_mount_opts: defaults,noatime

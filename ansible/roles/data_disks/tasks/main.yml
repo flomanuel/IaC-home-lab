@@ -1,0 +1,9 @@
+---
+# Formats and mounts the dedicated disks (tofu `data_disks`), e.g. for the K3s etcd datastore or postgres.
+# Must run before the service that writes to the mount path is installed, otherwise it writes to the OS disk.
+- name: Set up each data disk
+  ansible.builtin.include_tasks: disk.yml
+  loop: "{{ data_disks }}"
+  loop_control:
+    loop_var: data_disk
+    label: "{{ data_disk.serial }} -> {{ data_disk.mount_path }}"

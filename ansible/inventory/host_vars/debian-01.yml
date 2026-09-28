@@ -6,3 +6,9 @@ docker_networks:
   - postgres
 compose_services:
   - dockhand
+# Dedicated SSD for postgres (role data_disks), serial must match the tofu `data_disks`.
+# Mount root stays root:root 0755 (it holds lost+found); the stack bind-mounts
+# /srv/postgres/data, which the postgres entrypoint creates and chowns.
+data_disks:
+  - serial: postgres-data
+    mount_path: /srv/postgres
