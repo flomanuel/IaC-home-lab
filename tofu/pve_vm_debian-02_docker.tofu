@@ -64,8 +64,8 @@ module "debian-02" {
     { vlan = "mgmt", ip = "10.20.0.12/16" },
   ]
 
-  cores   = 4
-  memory  = 8192
+  cores   = 8
+  memory  = 16384
   disk_gb = 40
 
   tags = ["docker-compose", "applications"]
@@ -79,6 +79,9 @@ module "debian-02" {
     ]
     LDAP = [
       { type = "in", action = "ACCEPT", proto = "tcp", dport = "389", comment = "Acept LDAP request from mgmt network", iface = "net2" },
+    ]
+    nextcloud_aio = [
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "8080", comment = "Nextcloud AIO", iface = "net2" },
     ]
   }
 }

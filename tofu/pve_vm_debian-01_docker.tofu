@@ -96,9 +96,6 @@ module "debian-01" {
     dockhand = [
       { type = "in", action = "ACCEPT", proto = "tcp", dport = "3000", source = local.admin_ips, comment = "Dockhand break-glass (no traefik)", iface = "net2" },
     ]
-    # redis = [
-    #   { type = "in", action = "ACCEPT", proto = "tcp", dport = "6379", comment = "Redis", iface = "net1" },
-    # ]
   }
 }
 
