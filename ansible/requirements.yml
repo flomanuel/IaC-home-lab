@@ -5,3 +5,4 @@ collections:
   - name: community.docker
   - name: ansible.posix
   - name: community.crypto # hawser TLS certificates
+#  - name: infisical.vault

@@ -3,3 +3,7 @@ data_ip: "{{ debian02_data_ip }}"
 mgmt_ip: "{{ debian02_mgmt_ip }}"
 compose_services:
   - hawser
+nfs_mounts:
+  # Paperless-ngx data & media (same folder) & consume
+  - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/applications/paperless-ngx/"
+    path: /mnt/paperless-ngx/

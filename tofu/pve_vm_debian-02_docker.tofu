@@ -28,6 +28,16 @@ resource "cloudflare_dns_record" "debian-02_dot_data_dot_home" {
   comment = "tofu;home-lab;proxmox"
 }
 
+resource "cloudflare_dns_record" "wildcard_dot_debian-02_dot_mgmt_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "*.debian-02.mgmt.home"
+  content = "10.20.0.12"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;proxmox"
+}
+
 resource "cloudflare_dns_record" "wildcard_dot_debian-02_dot_prod_dot_home" {
   zone_id = var.zone_id_1
   name    = "*.debian-02.prod.home"
@@ -66,6 +76,9 @@ module "debian-02" {
   custom_firewall_rules = {
     hawser = [
       { type = "in", action = "ACCEPT", proto = "tcp", dport = "2376", source = "10.20.0.11", comment = "Hawser agent (Dockhand on debian-01)", iface = "net2" },
+    ]
+    LDAP = [
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "389", comment = "Acept LDAP request from mgmt network", iface = "net2" },
     ]
   }
 }

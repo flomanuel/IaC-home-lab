@@ -26,7 +26,7 @@ services:
       - traefik.http.routers.dockhand.rule=Host(`dockhand.{{ inventory_hostname }}.mgmt.home.sauers.link`)
       - traefik.http.routers.dockhand.tls=true
       - traefik.http.routers.dockhand.tls.certresolver=cloudflare
-      - traefik.http.routers.dockhand.entrypoints=mgmt
+      - traefik.http.routers.dockhand.entrypoints=websecure
       - traefik.http.services.dockhand.loadbalancer.server.port=3000
     networks:
       - frontend

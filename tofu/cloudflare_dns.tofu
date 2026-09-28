@@ -109,3 +109,13 @@ resource "cloudflare_dns_record" "auth_dot_home" {
   proxied = false
   comment = "tofu;home-lab;authentik"
 }
+
+resource "cloudflare_dns_record" "docs_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "docs.home"
+  content = "paperless-ngx.debian-02.prod.home.sauers.link"
+  type    = "CNAME"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;paperless-ngx"
+}

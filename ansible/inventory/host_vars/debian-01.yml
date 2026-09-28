@@ -1,15 +1,6 @@
 # DBs, secrets, docker compose; runs Dockhand (manages all docker hosts)
 data_ip: "{{ debian01_data_ip }}"
 mgmt_ip: "{{ debian01_mgmt_ip }}"
-nfs_mounts:
-  - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/audio"
-    path: /mnt/audio
-  - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/documents"
-    path: /mnt/documents
-  - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/images"
-    path: /mnt/images
-  - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/video"
-    path: /mnt/video
 docker_networks:
   - frontend
   - postgres
