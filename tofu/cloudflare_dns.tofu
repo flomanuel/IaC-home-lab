@@ -119,3 +119,13 @@ resource "cloudflare_dns_record" "docs_dot_home" {
   proxied = false
   comment = "tofu;home-lab;paperless-ngx"
 }
+
+resource "cloudflare_dns_record" "cloud_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "cloud.home"
+  content = "cloud.k8s-prod-1.home.sauers.link"
+  type    = "CNAME"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;nextcloud"
+}

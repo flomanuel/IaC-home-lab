@@ -1,0 +1,26 @@
+internalDatabase:
+  enabled: false
+externalDatabase:
+  enabled: true
+  type: postgresql
+  host: postgres.debian-01.data.home.sauers.link:5432
+  database: nextcloud-prod-1
+  user: nextcloud-prod-1
+  # password: see secret-values.yml
+
+nextcloud:
+  mail:
+    enabled: true
+    fromAddress:
+    smtp:
+      host:
+      secure: ssl
+      port:
+      name:
+      password:
+  extraVolumeMounts:
+    # tbd
+  objectStore:
+    s3:
+      enabled: true
+      # TBC

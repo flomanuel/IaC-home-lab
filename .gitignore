@@ -18,3 +18,4 @@ k3s_setup/3_cert-manager/2_kubernetes/1_secret.yml
 ansible/inventory/group_vars/all/secrets.yml
 k3s_setup/4_backups/values.yml
 PLAN.MD
+helm/nextcloud/secret-values.yml
