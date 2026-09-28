@@ -12,3 +12,16 @@ compose_services:
 data_disks:
   - serial: postgres-data
     mount_path: /srv/postgres
+nfs_mounts:
+  # Jellyfin readonly AUDIO
+  - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/audio"
+    path: /mnt/media/audio/
+  # Jellyfin readonly DOCS
+  - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/documents"
+    path: /mnt/media/documents
+  # Jellyfin readonly IMG
+  - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/images"
+    path: /mnt/media/images
+  # Jellyfin readonly VID
+  - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/video"
+    path: /mnt/media/video
