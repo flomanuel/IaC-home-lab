@@ -74,8 +74,8 @@ module "debian-01" {
   ]
 
   cores   = 8
-  memory  = 8192 # MiB
-  disk_gb = 40
+  memory  = 12288 # MiB
+  disk_gb = 60
 
   # Dedicated SSD disk for postgres, mounted by the Ansible role data_disks
   # (serial must match `data_disks` in ansible/inventory/host_vars/debian-01.yml).
