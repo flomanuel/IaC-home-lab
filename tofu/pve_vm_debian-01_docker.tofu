@@ -73,7 +73,7 @@ module "debian-01" {
     { vlan = "mgmt", ip = "10.20.0.11/16" },
   ]
 
-  cores   = 4
+  cores   = 8
   memory  = 8192 # MiB
   disk_gb = 40
 
