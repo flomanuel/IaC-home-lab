@@ -83,6 +83,14 @@ module "debian-01" {
     { datastore_id = var.storage_fast_disks, size = 10, serial = "postgres-data" },
   ]
 
+  # Intel Arc A310 for HW transcoding in containers. The Resource Mapping is
+  # created by hand on Proxmox (root@pam only); guest setup:
+  # docs/runbooks/arc-a310-debian-01.md
+  machine = "q35"
+  pci_devices = [
+    { mapping = "arc-a310" },
+  ]
+
   tags = ["docker-compose", "db", "secrets"]
 
   global_security_groups = ["ssh", "http", "https"]

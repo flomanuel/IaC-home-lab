@@ -24,6 +24,18 @@ resource "proxmox_virtual_environment_vm" "this" {
     dedicated = var.memory
   }
 
+  machine = var.machine
+
+  dynamic "hostpci" {
+    for_each = var.pci_devices # hostpci.key is the list index
+    content {
+      device  = "hostpci${hostpci.key}"
+      mapping = hostpci.value.mapping
+      pcie    = hostpci.value.pcie
+      rombar  = hostpci.value.rombar
+    }
+  }
+
   scsi_hardware = "virtio-scsi-single"
 
   disk {

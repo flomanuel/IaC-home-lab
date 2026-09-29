@@ -75,6 +75,27 @@ variable "data_disks" {
   }
 }
 
+variable "machine" {
+  description = "QEMU machine type: pc (i440fx) or q35. PCIe passthrough (pci_devices with pcie = true) needs q35. Changing it on an existing VM reboots it. null keeps the Proxmox default (pc) without touching existing VMs."
+  type        = string
+  default     = null
+}
+
+variable "pci_devices" { # see the runbook in docs for needed os config
+  description = "Host PCI devices passed through as hostpci0, hostpci1, ... in list order, by the name of a Proxmox Resource Mapping (Datacenter -> Resource Mappings; the API token cannot use raw PCI ids). Leave empty (the default) for none."
+  type = list(object({
+    mapping = string
+    pcie    = optional(bool, true)
+    rombar  = optional(bool, true)
+  }))
+  default = []
+
+  validation {
+    condition     = alltrue([for d in var.pci_devices : !d.pcie || startswith(coalesce(var.machine, "pc"), "q35")])
+    error_message = "pcie = true requires machine = \"q35\"."
+  }
+}
+
 variable "vm_id" {
   description = "Fixed VMID; null lets Proxmox pick one."
   type        = number
