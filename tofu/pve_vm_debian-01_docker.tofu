@@ -104,6 +104,9 @@ module "debian-01" {
     dockhand = [
       { type = "in", action = "ACCEPT", proto = "tcp", dport = "3000", source = local.admin_ips, comment = "Dockhand break-glass (no traefik)", iface = "net2" },
     ]
+    jellyfin_remote = [
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "4444", comment = "Jellyin from common home net" },
+    ]
   }
 }
 

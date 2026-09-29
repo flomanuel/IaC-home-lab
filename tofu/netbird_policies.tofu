@@ -135,7 +135,7 @@ resource "netbird_policy" "admin_prod" {
     bidirectional = false
     enabled       = true
     protocol      = "tcp"
-    ports         = ["22"]
+    ports         = ["22", "4444"] # 4444 for external jellyfin access, open for admins to test
     name          = "Admin: PROD access"
     description   = "Access to admin-endpoints in PROD"
     sources       = [netbird_group.admins_baseline.id]
