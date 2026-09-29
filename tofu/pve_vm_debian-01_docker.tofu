@@ -81,6 +81,7 @@ module "debian-01" {
   # (serial must match `data_disks` in ansible/inventory/host_vars/debian-01.yml).
   data_disks = [
     { datastore_id = var.storage_fast_disks, size = 10, serial = "postgres-data" },
+    { datastore_id = var.storage_fast_disks, size = 20, serial = "jellyfin-data" },
   ]
 
   # Intel Arc A310 for HW transcoding in containers. The Resource Mapping is

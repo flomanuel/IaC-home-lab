@@ -12,6 +12,8 @@ compose_services:
 data_disks:
   - serial: postgres-data
     mount_path: /srv/postgres
+  - serial: jellyfin-data
+    mount_path: /srv/jellyfin
 nfs_mounts:
   # Jellyfin readonly AUDIO
   - src: "{{ truenas_data_ip }}:/mnt/pool1_SeagateHDDs/data/audio"
