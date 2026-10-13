@@ -66,7 +66,7 @@ module "debian-02" {
 
   cores   = 8
   memory  = 16384
-  disk_gb = 40
+  disk_gb = 65
 
   tags = ["docker-compose", "applications"]
 
