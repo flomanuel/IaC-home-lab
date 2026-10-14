@@ -130,6 +130,16 @@ resource "cloudflare_dns_record" "streaming_dot_home" {
   comment = "tofu;home-lab;paperless-ngx"
 }
 
+resource "cloudflare_dns_record" "ical_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "ical.home"
+  content = "debian-02.prod.home.sauers.link"
+  type    = "CNAME"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;ical-reverse-proxy"
+}
+
 # ====== Applications ======
 
 resource "cloudflare_dns_record" "cloud_dot_home" {
