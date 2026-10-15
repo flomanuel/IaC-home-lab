@@ -1,0 +1,10 @@
+---
+# Host-specific values (keys, SSH IP) live in group_vars/truenas_s3_and_borgbackup.yml.
+borg_user: borg
+# Holds only borg's cache and security dir, not the repositories.
+borg_home: /var/lib/borg
+# TrueNAS dataset, mounted into the LXC. Every repository lives directly below it.
+borg_repo_dir: /mnt/borgbackup
+# SSH keys, each limited to one repository: [{repo: <name>, key: "<type> <base64> [comment]"}]
+borg_authorized_keys: []
+borg_authorized_keys_file: /etc/ssh/borg_authorized_keys

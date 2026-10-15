@@ -1,0 +1,14 @@
+# Managed by Ansible (roles/borg).
+# The borg user logs in with a key from {{ borg_authorized_keys_file }}, but
+# only via the data VLAN.
+# sshd uses the first value it obtains: on the data VLAN both blocks match and
+# the first one enables the keys, on every other address only the second one
+# does and leaves no login method.
+Match User {{ borg_user }} LocalAddress {{ borg_ssh_ip }}
+  AuthorizedKeysFile {{ borg_authorized_keys_file }}
+
+Match User {{ borg_user }}
+  AuthorizedKeysFile none
+  PasswordAuthentication no
+  DisableForwarding yes
+  PermitTTY no

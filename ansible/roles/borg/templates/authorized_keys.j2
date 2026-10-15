@@ -1,0 +1,5 @@
+# Managed by Ansible (roles/borg).
+# Each key may only access its own repository below {{ borg_repo_dir }}.
+{% for entry in borg_authorized_keys %}
+command="borg serve --restrict-to-repository {{ borg_repo_dir }}/{{ entry.repo }}",restrict {{ entry.key }}
+{% endfor %}

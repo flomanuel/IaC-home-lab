@@ -44,6 +44,16 @@ resource "cloudflare_dns_record" "s3-storage_dot_data_dot_home" {
   comment = "tofu;home-lab;TrueNAS"
 }
 
+resource "cloudflare_dns_record" "borg_dot_data_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "borg.data.home"
+  content = "10.30.1.128"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;TrueNAS"
+}
+
 # ====== TrueNAS Hosts ======
 
 resource "cloudflare_dns_record" "truenas_dot_data_dot_home" {

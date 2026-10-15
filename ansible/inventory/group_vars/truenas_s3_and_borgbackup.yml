@@ -1,0 +1,41 @@
+---
+# use "root" instead of "admin" for the cloud-init user.
+ansible_user: root
+# base role: keep key-only root login, otherwise the playbook locks itself out.
+ssh_permit_root_login: prohibit-password
+
+# SeaweedFS release (github.com/seaweedfs/seaweedfs/releases); nginx and certbot come from Debian.
+seaweedfs_version: "4.47"
+
+# TrueNAS dataset, mounted into the LXC.
+# Holds ALL SeaweedFS state (data/, letsencrypt/).
+# Thus, TrueNAS snapshot is a complete backup.
+seaweedfs_data_dir: /mnt/seaweedfs
+
+seaweedfs_data_ip: "{{ lxc_s3_1_data }}" # VLAN data: S3 (https :443 and :8333)
+seaweedfs_mgmt_ip: "{{ lxc_s3_1 }}" # VLAN mgmt: filer (:8888) and admin (:23646) web UIs
+seaweedfs_data_fqdn: s3-storage.data.home.sauers.link
+seaweedfs_mgmt_fqdn: s3-storage.mgmt.home.sauers.link
+
+# Let's Encrypt ACME acme challenge mail address
+seaweedfs_acme_email: admin@simia-cogitans.net
+
+# ------ Borg backup server ------
+# borgbackup comes from Debian (borg 1.x), clients must use borg 1.x as well.
+# The TrueNAS dataset /mnt/borgbackup (borg_repo_dir) is mounted into the LXC.
+# Clients log in as "borg" with a key from borg_authorized_keys, only via this IP,
+# and may only access their own repository (borg serve --restrict-to-repository).
+# They initialize the repository themselves (with their own passphrase).
+# Repo URL: ssh://borg@<borg_ssh_ip>:22/mnt/borgbackup/<repo>
+borg_ssh_ip: "{{ lxc_s3_1_data }}" # VLAN data: SSH for the borg user
+
+borg_authorized_keys:
+  - repo: nextcloud
+    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINNisvm4+ORrEqvhEWY/REZQP3/wrPQ72b/WqrBlwjNV root@nextcloud-aio-borgbackup"
+# Nextcloud AIO (debian-02). Setup:
+#   1. AIO interface > Backup: leave the local path empty, remote borg repo URL
+#      ssh://borg@10.30.1.128:22/mnt/borgbackup/nextcloud
+#   2. "Create backup" fails, but shows AIO's public key. Add it here and deploy.
+#   3. "Create backup" again and store the encryption password AIO shows.
+#  - repo: nextcloud
+#    key: "ssh-ed25519 AAAA... root@nextcloud-aio-borgbackup"

@@ -1,5 +1,5 @@
 ---
 # Every host-type playbook applies the base roles itself, so base.yml is not imported here.
-- import_playbook: truenas_s3.yml
+- import_playbook: truenas_s3_and_borgbackup.yml
 - import_playbook: docker_hosts.yml
 - import_playbook: k8s.yml

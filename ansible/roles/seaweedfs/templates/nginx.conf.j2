@@ -1,7 +1,7 @@
 # Managed by Ansible (roles/seaweedfs).
 # TLS termination for SeaweedFS (weed mini, loopback only).
-# Listening on explicit IPs keeps S3 on the data VLAN and the UIs on the mgmt
-# VLAN, and avoids clashing with weed's own 127.0.0.1 listeners on the same ports.
+# Listening on explicit IPs keeps S3 on the data VLAN and the UIs on the mgmt VLAN.
+# weed listens on other loopback ports (seaweedfs_*_port), see defaults/main.yml.
 user www-data;
 worker_processes auto;
 pid /run/nginx.pid;
@@ -38,7 +38,7 @@ http {
     server_name {{ seaweedfs_data_fqdn }};
 
     location / {
-      proxy_pass http://127.0.0.1:8333;
+      proxy_pass http://127.0.0.1:{{ seaweedfs_s3_port }};
     }
   }
 
@@ -48,7 +48,7 @@ http {
     server_name {{ seaweedfs_mgmt_fqdn }};
 
     location / {
-      proxy_pass http://127.0.0.1:23646;
+      proxy_pass http://127.0.0.1:{{ seaweedfs_admin_port }};
     }
   }
 
@@ -58,7 +58,7 @@ http {
     server_name {{ seaweedfs_mgmt_fqdn }};
 
     location / {
-      proxy_pass http://127.0.0.1:8888;
+      proxy_pass http://127.0.0.1:{{ seaweedfs_filer_port }};
     }
   }
 }

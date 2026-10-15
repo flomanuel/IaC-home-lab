@@ -1,0 +1,65 @@
+---
+# Borg backup server: clients log in via SSH (data VLAN only) with a key that
+# is limited to one repository by a forced "borg serve". The clients initialize
+# their repositories and handle retention (prune, compact) themselves.
+
+- name: Stat the repository directory
+  ansible.builtin.stat:
+    path: "{{ borg_repo_dir }}"
+  register: borg_repo_dir_stat
+
+- name: Check that the repository directory exists
+  ansible.builtin.assert:
+    that: borg_repo_dir_stat.stat.isdir | default(false)
+    fail_msg: "{{ borg_repo_dir }} does not exist or is not a directory."
+    quiet: true
+
+- name: Check that every SSH key has a repository
+  ansible.builtin.assert:
+    that:
+      - item.repo | default('') | length > 0
+      - item.key | default('') | split | length >= 2
+    fail_msg: "Every entry in borg_authorized_keys needs a repo and a key (\"<type> <base64>\")."
+    quiet: true
+  loop: "{{ borg_authorized_keys }}"
+  loop_control:
+    label: "{{ item.repo | default('?') }}"
+
+- name: Install borgbackup
+  ansible.builtin.apt:
+    name: borgbackup
+    state: present
+
+# sshd runs the forced "borg serve" through the login shell, so nologin does not work.
+# The account has no password, only the keys can log in.
+- name: Create borg system user
+  ansible.builtin.user:
+    name: "{{ borg_user }}"
+    system: true
+    shell: /bin/sh
+    home: "{{ borg_home }}"
+    create_home: true
+
+- name: Set owner of the repository directory
+  ansible.builtin.file:
+    path: "{{ borg_repo_dir }}"
+    state: directory
+    owner: "{{ borg_user }}"
+    group: "{{ borg_user }}"
+    mode: "0750"
+
+- name: Template authorized_keys
+  ansible.builtin.template:
+    src: authorized_keys.j2
+    dest: "{{ borg_authorized_keys_file }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Restrict borg SSH login to the data VLAN
+  ansible.builtin.template:
+    src: 60-borg.conf.j2
+    dest: /etc/ssh/sshd_config.d/60-borg.conf
+    mode: "0644"
+    validate: sshd -t -f %s
+  notify: Restart sshd

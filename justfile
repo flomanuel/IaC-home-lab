@@ -65,7 +65,7 @@ ping:
 site *args:
     cd {{ ansible_dir }} && ansible-playbook playbooks/site.yml {{ args }}
 
-# Run a single playbook, e.g. `just play truenas_s3 --limit lxc-1 --tags seaweedfs`
+# Run a single playbook, e.g. `just play truenas_s3_and_borgbackup --limit lxc-1 --tags seaweedfs`
 [group('ansible')]
 play pb *args:
     cd {{ ansible_dir }} && ansible-playbook playbooks/{{ pb }}.yml {{ args }}

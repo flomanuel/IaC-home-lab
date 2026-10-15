@@ -1,5 +1,5 @@
 ---
-# Host-specific values (version, IPs, FQDNs, data dir) live in group_vars/truenas_s3.yml.
+# Host-specific values (version, IPs, FQDNs, data dir) live in group_vars/truenas_s3_and_borgbackup.yml.
 seaweedfs_user: seaweedfs
 seaweedfs_config_dir: /etc/seaweedfs
 # weed mini keeps master metadata, volumes and the filer store (leveldb2) here.
@@ -9,4 +9,11 @@ seaweedfs_arch_map:
   x86_64: amd64
   aarch64: arm64
 seaweedfs_arch: "{{ seaweedfs_arch_map[ansible_facts['architecture']] }}"
+# Loopback ports of weed, published by nginx on the public ports (443/8333,
+# 8888, 23646). They must differ from those: weed mini treats a port as taken
+# if nginx listens on it on any IP and silently moves to the next free one
+# (e.g. after a reboot, when nginx starts first). gRPC uses port + 10000.
+seaweedfs_s3_port: 7333
+seaweedfs_filer_port: 7888
+seaweedfs_admin_port: 7646
 seaweedfs_release_url: "https://github.com/seaweedfs/seaweedfs/releases/download/{{ seaweedfs_version }}/linux_{{ seaweedfs_arch }}.tar.gz"

@@ -1,10 +1,11 @@
 ---
 # Needs group_vars/all/secrets.yml
-- name: SeaweedFS S3 on TrueNAS LXC host
-  hosts: truenas_s3
+- name: SeaweedFS S3 and Borg backup server on TrueNAS LXC host
+  hosts: truenas_s3_and_borgbackup
   become: false
   gather_facts: true
   roles:
     - { role: base, tags: base }
     - { role: nfs_mounts, tags: nfs }
     - { role: seaweedfs, tags: seaweedfs }
+    - { role: borg, tags: borg }
