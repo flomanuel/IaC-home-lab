@@ -73,7 +73,7 @@ resource "netbird_policy" "sauers_prod" {
     bidirectional = false
     enabled       = true
     protocol      = "tcp"
-    ports         = ["80", "443"]
+    ports         = ["80", "443", "3478"]
     name          = "Sauers: PROD (web apps)"
     description   = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany."
     sources       = [netbird_group.sauers.id]
