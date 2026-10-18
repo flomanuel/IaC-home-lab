@@ -82,6 +82,8 @@ module "debian-02" {
     ]
     nextcloud_aio = [
       { type = "in", action = "ACCEPT", proto = "tcp", dport = "8080", comment = "Nextcloud AIO", iface = "net2" },
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "3478", comment = "Nextcloud Talk (TCP)", iface = "net0" },
+      { type = "in", action = "ACCEPT", proto = "udp", dport = "3478", comment = "Nextcloud Talk (UDP)", iface = "net0" },
     ]
   }
 }

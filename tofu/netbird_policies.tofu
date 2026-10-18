@@ -63,8 +63,8 @@ resource "netbird_policy" "admin_tp-link" {
   }
 }
 
-resource "netbird_policy" "sauers_prod" {
-  name        = "Sauers: PROD (web apps)"
+resource "netbird_policy" "sauers_prod_tcp" {
+  name        = "Sauers: PROD (web apps) TCP"
   description = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany."
   enabled     = true
 
@@ -74,8 +74,29 @@ resource "netbird_policy" "sauers_prod" {
     enabled       = true
     protocol      = "tcp"
     ports         = ["80", "443", "3478"]
-    name          = "Sauers: PROD (web apps)"
-    description   = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany."
+    name          = "Sauers: PROD (web apps) TCP"
+    description   = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany. TCP"
+    sources       = [netbird_group.sauers.id]
+    destination_resource = {
+      id   = netbird_network_resource.helldiek_prod.id
+      type = "subnet"
+    }
+  }
+}
+
+resource "netbird_policy" "sauers_prod_udp" {
+  name        = "Sauers: PROD (web apps) UDP"
+  description = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany."
+  enabled     = true
+
+  rule {
+    action        = "accept"
+    bidirectional = false
+    enabled       = true
+    protocol      = "udp"
+    ports         = ["3478"]
+    name          = "Sauers: PROD (web apps) UDP"
+    description   = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany. UDP"
     sources       = [netbird_group.sauers.id]
     destination_resource = {
       id   = netbird_network_resource.helldiek_prod.id
