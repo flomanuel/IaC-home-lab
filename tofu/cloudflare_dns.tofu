@@ -162,6 +162,16 @@ resource "cloudflare_dns_record" "agent_dot_home" {
 
 # ====== Applications ======
 
+resource "cloudflare_dns_record" "router_dot_mgmt_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "router.mgmt.home"
+  content = "10.20.0.1"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;router"
+}
+
 resource "cloudflare_dns_record" "cloud_dot_home" {
   zone_id = var.zone_id_1
   name    = "cloud.home"
