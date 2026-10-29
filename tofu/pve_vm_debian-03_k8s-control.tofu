@@ -23,6 +23,8 @@ module "k8s-control-1" {
   common       = local.common
   create_after = [module.debian-02]
 
+  started = false
+
   name          = "k8s-control-1"
   image         = "debian"
   snippet       = "qemu_guest_agent_debian"

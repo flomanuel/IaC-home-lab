@@ -1,0 +1,9 @@
+---
+# The coding agent itself (Claude Code, ...) is installed by hand as remote_code_user.
+- name: Hosts for remote coding agent sessions
+  hosts: remote_code_hosts
+  become: true
+  roles:
+    - { role: base, tags: base }
+    - { role: nfs_mounts, tags: nfs }
+    - { role: remote_code, tags: remote_code }

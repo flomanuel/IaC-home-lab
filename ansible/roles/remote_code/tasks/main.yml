@@ -1,0 +1,32 @@
+---
+- name: Install packages
+  ansible.builtin.apt:
+    name: "{{ remote_code_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Create coding agent user
+  ansible.builtin.user:
+    name: "{{ remote_code_user }}"
+    shell: /bin/bash
+    create_home: true
+  register: remote_code_account
+
+# Same keys as the admin user (from cloud-init), so `ssh <remote_code_user>@<host>` works.
+- name: Create .ssh directory
+  ansible.builtin.file:
+    path: "{{ remote_code_account.home }}/.ssh"
+    state: directory
+    owner: "{{ remote_code_user }}"
+    group: "{{ remote_code_user }}"
+    mode: "0700"
+
+- name: Copy authorized_keys from the admin user
+  ansible.builtin.copy:
+    src: "/home/{{ admin_user }}/.ssh/authorized_keys"
+    dest: "{{ remote_code_account.home }}/.ssh/authorized_keys"
+    remote_src: true
+    owner: "{{ remote_code_user }}"
+    group: "{{ remote_code_user }}"
+    mode: "0600"

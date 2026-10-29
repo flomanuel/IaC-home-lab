@@ -23,6 +23,8 @@ module "k8s-worker-2" {
   common = local.common
   create_after = [module.k8s-worker-1]
 
+  started = false
+
   name  = "k8s-worker-2"
   image = "debian"
   snippet = "qemu_guest_agent_debian"

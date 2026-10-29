@@ -1,0 +1,34 @@
+---
+# Unprivileged account the coding agent runs as. No sudo: packages come from this role, not from the agent.
+remote_code_user: dev
+
+# Toolchain for coding agents and the code they build and test. Extend per need.
+remote_code_packages:
+  # Tools agents call directly
+  - git
+  - ripgrep
+  - fd-find
+  - jq
+  - tree
+  - wget
+  - zip
+  - unzip
+  - sqlite3
+  - shellcheck
+  # Sandboxing of agent commands on Linux (e.g. Claude Code /sandbox)
+  - bubblewrap
+  - socat
+  # Python
+  - python3
+  - python3-pip
+  - python3-venv
+  - python3-dev
+  - pipx
+  # Node.js (npm-based agents and tooling)
+  - nodejs
+  - npm
+  # Native builds (Python wheels, node-gyp, ...)
+  - build-essential
+  - pkg-config
+  - libssl-dev
+  - libffi-dev

@@ -10,6 +10,8 @@ resource "proxmox_virtual_environment_vm" "this" {
   # Without the agent, a graceful shutdown on destroy would wait for ACPI. Stop instead.
   stop_on_destroy = !var.agent_enabled
 
+  started = var.started
+
   agent {
     enabled = var.agent_enabled
     timeout = "5m"
