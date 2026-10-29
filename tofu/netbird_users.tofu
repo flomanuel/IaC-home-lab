@@ -5,8 +5,17 @@ resource "netbird_user" "florian_sauer" {
   is_service_user = false
   role            = "owner"
   auto_groups = [
-    netbird_group.admins_baseline.id,
+    netbird_group.users_VNC_access.id,
     netbird_group.sauers.id,
+    netbird_group.admins_baseline.id,
     netbird_group.k8s_admins.id,
+  ]
+}
+
+resource "netbird_user" "johannes_sauer" {
+  is_service_user = false
+  role            = "user"
+  auto_groups = [
+    netbird_group.sauers.id,
   ]
 }

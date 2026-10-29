@@ -187,3 +187,24 @@ resource "netbird_policy" "admin_data" {
     }
   }
 }
+
+resource "netbird_policy" "users_VNC_vms" {
+  name        = "Users: VNC access to VMs"
+  description = "Access to VMs vias VNC in PROD for specific users"
+  enabled     = true
+
+  rule {
+    action        = "accept"
+    bidirectional = false
+    enabled       = true
+    protocol      = "tcp"
+    ports         = ["5900"]
+    name          = "Users: VNC VMs access"
+    description   = "Access to VMs vias VNC in PROD for specific users."
+    sources       = [netbird_group.users_VNC_access.id]
+    destination_resource = {
+      id   = netbird_network_resource.helldiek_prod.id
+      type = "subnet"
+    }
+  }
+}

@@ -16,3 +16,7 @@ resource "netbird_group" "k8s_admins" {
 resource "netbird_group" "admins_baseline" {
   name = "Admins (baseline)"
 }
+
+resource "netbird_group" "users_VNC_access" {
+  name = "Users VNC access"
+}
