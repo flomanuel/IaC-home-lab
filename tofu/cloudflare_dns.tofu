@@ -186,7 +186,7 @@ resource "cloudflare_dns_record" "cloud_dot_home" {
 
 resource "cloudflare_dns_record" "win11_dot_mgmt_dot_home" {
   zone_id = var.zone_id_1
-  name    = "win11.mgmt"
+  name    = "win11.mgmt.home"
   content = "10.20.1.189"
   type    = "A"
   ttl     = 1
