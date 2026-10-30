@@ -181,3 +181,15 @@ resource "cloudflare_dns_record" "cloud_dot_home" {
   proxied = false
   comment = "tofu;home-lab;nextcloud"
 }
+
+# ====== unmanaged VMs ======
+
+resource "cloudflare_dns_record" "win11_dot_mgmt_dot_home" {
+  zone_id = var.zone_id_1
+  name    = "win11.mgmt"
+  content = "10.20.1.189"
+  type    = "A"
+  ttl     = 1
+  proxied = false
+  comment = "tofu;home-lab;win11"
+}
