@@ -203,7 +203,7 @@ resource "netbird_policy" "users_VNC_vms" {
     description   = "Access to VMs vias VNC in PROD for specific users."
     sources       = [netbird_group.users_VNC_access.id]
     destination_resource = {
-      id   = netbird_network_resource.helldiek_prod.id
+      id   = netbird_network_resource.helldiek_mgmt.id
       type = "subnet"
     }
   }
