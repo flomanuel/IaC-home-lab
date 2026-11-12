@@ -44,6 +44,7 @@ module "debian-08" {
   custom_firewall_rules = {
     containerlab = [
       { type = "in", action = "ACCEPT", proto = "tcp", dport = "5201", comment = "iperf3" },
+      { type = "in", action = "ACCEPT", proto = "tcp", dport = "5001", comment = "edgeshark" },
     ]
   }
 
