@@ -208,3 +208,25 @@ resource "netbird_policy" "users_VNC_vms" {
     }
   }
 }
+
+
+resource "netbird_policy" "admin_h_da" {
+  name        = "Florian: access for h_da studies"
+  description = "Access to endpoints in PROD that are needed for Florian's h_da studies"
+  enabled     = true
+
+  rule {
+    action        = "accept"
+    bidirectional = false
+    enabled       = true
+    protocol      = "tcp"
+    ports         = ["5001"]
+    name          = "Florian: access for h_da studies"
+    description   = "Access to endpoints in PROD that are needed for Florian's h_da studies"
+    sources       = [netbird_group.admins_baseline.id]
+    destination_resource = {
+      id   = netbird_network_resource.helldiek_prod.id
+      type = "subnet"
+    }
+  }
+}
