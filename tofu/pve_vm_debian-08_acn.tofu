@@ -39,7 +39,7 @@ module "debian-08" {
 
   tags = ["acn"]
 
-  global_security_groups = ["ssh"]
+  global_security_groups = ["ssh", "http", "https"]
 
   custom_firewall_rules = {
     containerlab = [
