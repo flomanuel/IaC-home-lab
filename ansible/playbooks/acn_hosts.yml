@@ -1,0 +1,8 @@
+---
+# Basic setup only: the same baseline as base.yml, limited to acn_hosts.
+- name: Hosts for acn
+  hosts: acn_hosts
+  become: true
+  roles:
+    - { role: base, tags: base }
+    - { role: nfs_mounts, tags: nfs }

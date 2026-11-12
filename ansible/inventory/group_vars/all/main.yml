@@ -12,6 +12,7 @@ debian04_ip: 10.50.0.14
 debian05_ip: 10.50.0.15
 debian06_ip: 10.50.0.16
 debian07_ip: 10.50.0.17
+debian08_ip: 10.50.0.18
 
 # TrueNAS LXC containers
 lxc_s3_1: 10.20.1.148 # mgmt

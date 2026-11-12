@@ -13,6 +13,10 @@ module "debian-07" {
   common       = local.common
   create_after = [module.k8s-worker-3]
 
+  # Deactivated: VM is kept, but stopped and not started on host boot.
+  started       = false
+  start_on_boot = false
+
   name          = "debian-07"
   image         = "debian"
   snippet       = "qemu_guest_agent_debian"
