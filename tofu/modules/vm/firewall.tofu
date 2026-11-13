@@ -40,7 +40,9 @@ resource "proxmox_virtual_environment_firewall_options" "this" {
   node_name = proxmox_virtual_environment_vm.this.node_name
   vm_id     = proxmox_virtual_environment_vm.this.vm_id
 
-  enabled = true
+  enabled   = true
+  macfilter = var.firewall_options.macfilter
+  dhcp      = var.firewall_options.dhcp
 }
 
 resource "proxmox_virtual_environment_firewall_rules" "this" {

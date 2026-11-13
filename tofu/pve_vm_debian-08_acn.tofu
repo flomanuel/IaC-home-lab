@@ -48,7 +48,10 @@ module "debian-08" {
     ]
   }
 
-
+  firewall_options = {
+    macfilter = false # containerlab nodes send frames with their own MACs
+    dhcp      = true
+  }
 }
 
 output "debian-08" {

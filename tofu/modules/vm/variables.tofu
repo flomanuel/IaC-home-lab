@@ -132,8 +132,8 @@ variable "create_after" {
 
 variable "started" {
   description = "Start the VM"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "custom_firewall_rules" {
@@ -150,4 +150,14 @@ variable "custom_firewall_rules" {
     iface   = optional(string)
   })))
   default = {}
+}
+
+variable "firewall_options" {
+  description = "Per-VM Proxmox firewall options, e.g. { macfilter = false, dhcp = true }. An unset (null) option keeps the Proxmox/provider default. Only applied when the VM firewall is active (global_security_groups or custom_firewall_rules set)."
+  type = object({
+    macfilter = optional(bool) # drop frames whose source MAC is not the NIC's own
+    dhcp      = optional(bool) # allow DHCP traffic through the firewall
+  })
+  default  = {}
+  nullable = false
 }

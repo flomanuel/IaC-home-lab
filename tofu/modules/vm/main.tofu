@@ -12,6 +12,13 @@ resource "proxmox_virtual_environment_vm" "this" {
 
   started = var.started
 
+  lifecycle {
+    precondition {
+      condition     = local.firewall_active || alltrue([for v in values(var.firewall_options) : v == null])
+      error_message = "firewall_options only takes effect when the VM firewall is active: set global_security_groups or custom_firewall_rules."
+    }
+  }
+
   agent {
     enabled = var.agent_enabled
     timeout = "5m"
