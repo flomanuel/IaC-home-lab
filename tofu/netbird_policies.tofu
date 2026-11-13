@@ -73,7 +73,7 @@ resource "netbird_policy" "sauers_prod_tcp" {
     bidirectional = false
     enabled       = true
     protocol      = "tcp"
-    ports         = ["80", "443", "3478"]
+    ports         = ["80", "443", "3478", "5201"]
     name          = "Sauers: PROD (web apps) TCP"
     description   = "Helldiek Network, Network for Home Lab in Helldiek, Bassum, Germany. TCP"
     sources       = [netbird_group.sauers.id]
@@ -159,6 +159,26 @@ resource "netbird_policy" "admin_prod" {
     ports         = ["22", "4444"] # 4444 for external jellyfin access, open for admins to test
     name          = "Admin: PROD access"
     description   = "Access to admin-endpoints in PROD"
+    sources       = [netbird_group.admins_baseline.id]
+    destination_resource = {
+      id   = netbird_network_resource.helldiek_prod.id
+      type = "subnet"
+    }
+  }
+}
+
+resource "netbird_policy" "admin_prod_icmp" {
+  name        = "Admin: PROD ICMP"
+  description = "Allow admins to ping hosts in PROD"
+  enabled     = true
+
+  rule {
+    action        = "accept"
+    bidirectional = false
+    enabled       = true
+    protocol      = "icmp"
+    name          = "Admin: PROD ICMP"
+    description   = "Allow admins to ping hosts in PROD"
     sources       = [netbird_group.admins_baseline.id]
     destination_resource = {
       id   = netbird_network_resource.helldiek_prod.id

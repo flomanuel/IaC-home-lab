@@ -23,6 +23,9 @@ locals {
     https = [
       { type = "in", action = "ACCEPT", proto = "tcp", dport = "443", comment = "HTTPS" },
     ]
+    icmp = [
+      { type = "in", action = "ACCEPT", proto = "icmp", comment = "ICMP (ping)" },
+    ]
     # https://docs.k3s.io/installation/requirements#inbound-rules-for-k3s-nodes
     # Sources follow the K3s docs (nodes only; server nodes for etcd). The
     # kube-vip control-plane VIP (ARP mode) moves between the server nodes;
