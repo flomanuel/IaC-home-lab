@@ -29,8 +29,8 @@ module "debian-07" {
 
   # Remote coding agents are light (the model runs remotely); the headroom is
   # for what they run: builds, tests, package installs.
-  cores   = 8
-  memory  = 16384 # MiB
+  cores   = 4
+  memory  = 4096 # MiB
   disk_gb = 40
 
   tags = ["remote-code"]
