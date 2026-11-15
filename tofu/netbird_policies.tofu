@@ -210,7 +210,7 @@ resource "netbird_policy" "admin_data" {
 
 resource "netbird_policy" "users_spice" {
   name        = "Users: spice access to VMs"
-  description = "Access to VMs vias spice in PROD for specific users"
+  description = "Access to VMs via spice in PROD for specific users"
   enabled     = true
 
   rule {
@@ -218,10 +218,14 @@ resource "netbird_policy" "users_spice" {
     bidirectional = false
     enabled       = true
     protocol      = "tcp"
-    ports         = ["3128"]
-    name          = "Users: spice VMs access"
-    description   = "Access to VMs vias spice in PROD for specific users."
-    sources       = [netbird_group.users_VNC_access.id]
+    # ports and port_ranges are mutually exclusive -> 3128 as single-port range
+    port_ranges = [
+      { start = 3128, end = 3128 },
+      { start = 5900, end = 5999 },
+    ]
+    name        = "Users: spice VMs access"
+    description = "Access to VMs via spice in PROD for specific users."
+    sources     = [netbird_group.users_VNC_access.id]
     destination_resource = {
       id   = netbird_network_resource.helldiek_mgmt.id
       type = "subnet"
