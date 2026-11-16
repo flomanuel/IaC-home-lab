@@ -175,7 +175,7 @@ resource "cloudflare_dns_record" "cloud_dot_home" {
 resource "cloudflare_dns_record" "agent_dot_home" {
   zone_id = var.zone_id_1
   name    = "agent.home"
-  content = "10.50.0.19"
+  content = "10.50.0.11"
   type    = "A"
   ttl     = 1
   proxied = false
